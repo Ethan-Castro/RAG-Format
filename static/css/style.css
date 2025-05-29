@@ -11,6 +11,104 @@
     --dark-color: #212529;
 }
 
+/* Light theme specific styles */
+[data-bs-theme="light"] {
+    --bs-body-bg: #ffffff;
+    --bs-body-color: #212529;
+    --bs-border-color: #dee2e6;
+}
+
+[data-bs-theme="light"] body {
+    background-color: #ffffff;
+    color: #212529;
+}
+
+[data-bs-theme="light"] .navbar {
+    background-color: #f8f9fa !important;
+    border-bottom: 1px solid #dee2e6;
+}
+
+[data-bs-theme="light"] .card {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+[data-bs-theme="light"] .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+[data-bs-theme="light"] .list-group-item {
+    background-color: #ffffff;
+    border-color: #dee2e6;
+    color: #212529;
+}
+
+[data-bs-theme="light"] .list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+[data-bs-theme="light"] .content-preview {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #212529;
+}
+
+[data-bs-theme="light"] .modal-content {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+}
+
+[data-bs-theme="light"] footer {
+    background-color: #f8f9fa !important;
+    border-top: 1px solid #dee2e6;
+    color: #212529;
+}
+
+[data-bs-theme="light"] .input-group-text {
+    background-color: #f8f9fa;
+    border-color: #ced4da;
+    color: #495057;
+}
+
+[data-bs-theme="light"] .btn-outline-secondary {
+    color: #6c757d;
+    border-color: #6c757d;
+}
+
+[data-bs-theme="light"] .btn-outline-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #ffffff;
+}
+
+[data-bs-theme="light"] .example-url {
+    border-color: #6c757d;
+    color: #6c757d;
+}
+
+[data-bs-theme="light"] .example-url:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #ffffff;
+}
+
+/* Theme toggle button */
+#themeToggle {
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+#themeToggle:hover {
+    transform: scale(1.1);
+}
+
 /* Body and layout improvements */
 body {
     background-color: var(--bs-gray-900);

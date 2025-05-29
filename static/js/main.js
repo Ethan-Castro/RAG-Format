@@ -120,6 +120,12 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('External link clicked:', this.href);
         });
     });
+    
+    // Theme toggle event listener
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
 });
 
 // Utility functions
@@ -252,21 +258,32 @@ function getFromLocalStorage(key) {
     }
 }
 
-// Theme management (if needed in future)
+// Theme management
 function toggleTheme() {
     const html = document.documentElement;
     const currentTheme = html.getAttribute('data-bs-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     html.setAttribute('data-bs-theme', newTheme);
     saveToLocalStorage('theme', newTheme);
+    updateThemeIcon(newTheme);
+}
+
+function updateThemeIcon(theme) {
+    const themeIcon = document.getElementById('themeIcon');
+    if (themeIcon) {
+        if (theme === 'dark') {
+            themeIcon.className = 'fas fa-sun';
+        } else {
+            themeIcon.className = 'fas fa-moon';
+        }
+    }
 }
 
 // Initialize theme from localStorage
 function initializeTheme() {
-    const savedTheme = getFromLocalStorage('theme');
-    if (savedTheme) {
-        document.documentElement.setAttribute('data-bs-theme', savedTheme);
-    }
+    const savedTheme = getFromLocalStorage('theme') || 'dark';
+    document.documentElement.setAttribute('data-bs-theme', savedTheme);
+    updateThemeIcon(savedTheme);
 }
 
 // Call theme initialization
