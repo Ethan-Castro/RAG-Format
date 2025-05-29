@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import trafilatura
 from urllib.parse import urljoin, urlparse
 import logging
+from link_extractor import extract_links_from_website
 
 logger = logging.getLogger(__name__)
 
@@ -54,27 +55,20 @@ def scrape_website_content(url):
         # Extract main content using trafilatura
         main_content = get_website_text_content(url)
         
-        # Extract ALL links including hyperlinks
+        # Extract all links exactly like your code
         links = []
-        for link in soup.find_all('a', href=True):
+        all_links = soup.find_all('a', href=True)
+        for link in all_links:
             try:
-                link_text = link.get_text().strip()
-                link_url = urljoin(url, link['href'])
-                
-                # Skip empty or meaningless URLs
-                if not link_url or link['href'] in ['#', '', 'javascript:void(0)', 'javascript:;']:
-                    continue
-                
-                # If no text, use a cleaned version of the URL
-                display_text = link_text if link_text else link_url.split('/')[-1] or link_url
-                
-                links.append({
-                    'text': display_text,
-                    'url': link_url
-                })
-            except Exception as e:
-                # Skip problematic links but continue processing
-                logger.debug(f"Skipping link due to error: {e}")
+                text = link.get_text().strip()
+                href = link.attrs['href'] if 'href' in link.attrs else ''
+                if text and href:
+                    absolute_url = urljoin(url, href)
+                    links.append({
+                        'text': text,
+                        'url': absolute_url
+                    })
+            except:
                 continue
         
         # Remove duplicate links based on URL
