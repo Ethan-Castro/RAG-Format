@@ -1,0 +1,192 @@
+2025-05-29 15:20:53.85
+c85197fd
+User
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-05-29 15:20:53.85
+c85197fd
+User
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/trafilatura/downloads.py", line 314, in fetch_response
+2025-05-29 15:20:53.85
+c85197fd
+User
+response = dl_function(url, no_ssl, with_headers, config) # Response
+2025-05-29 15:20:53.85
+c85197fd
+User
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-05-29 15:20:53.85
+c85197fd
+User
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/trafilatura/downloads.py", line 212, in _send_urllib_request
+2025-05-29 15:20:53.85
+c85197fd
+User
+response = pool_manager.request(
+2025-05-29 15:20:53.85
+c85197fd
+User
+^^^^^^^^^^^^^^^^^^^^^
+2025-05-29 15:20:53.85
+c85197fd
+User
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/urllib3/_request_methods.py", line 135, in request
+2025-05-29 15:20:53.85
+c85197fd
+User
+return self.request_encode_url(
+2025-05-29 15:20:53.85
+c85197fd
+User
+^^^^^^^^^^^^^^^^^^^^^^^^
+2025-05-29 15:20:53.85
+c85197fd
+User
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/urllib3/_request_methods.py", line 182, in request_encode_url
+2025-05-29 15:20:53.85
+c85197fd
+User
+return self.urlopen(method, url, **extra_kw)
+2025-05-29 15:20:53.85
+c85197fd
+User
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-05-29 15:20:53.85
+c85197fd
+User
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/urllib3/poolmanager.py", line 443, in urlopen
+2025-05-29 15:20:53.85
+c85197fd
+User
+response = conn.urlopen(method, u.request_uri, **kw)
+2025-05-29 15:20:53.85
+c85197fd
+User
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-05-29 15:20:53.85
+c85197fd
+User
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+2025-05-29 15:20:53.85
+c85197fd
+User
+response = self._make_request(
+2025-05-29 15:20:53.85
+c85197fd
+User
+^^^^^^^^^^^^^^^^^^^
+2025-05-29 15:20:53.85
+c85197fd
+User
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/urllib3/connectionpool.py", line 534, in _make_request
+2025-05-29 15:20:53.85
+c85197fd
+User
+response = conn.getresponse()
+2025-05-29 15:20:53.85
+c85197fd
+User
+^^^^^^^^^^^^^^^^^^
+2025-05-29 15:20:53.85
+c85197fd
+User
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/urllib3/connection.py", line 516, in getresponse
+2025-05-29 15:20:53.85
+c85197fd
+User
+httplib_response = super().getresponse()
+2025-05-29 15:20:53.85
+c85197fd
+User
+^^^^^^^^^^^^^^^^^^^^^
+2025-05-29 15:20:53.85
+c85197fd
+User
+File "/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/http/client.py", line 1395, in getresponse
+2025-05-29 15:20:53.85
+c85197fd
+User
+response.begin()
+2025-05-29 15:20:53.85
+c85197fd
+User
+File "/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/http/client.py", line 325, in begin
+2025-05-29 15:20:53.85
+c85197fd
+User
+version, status, reason = self._read_status()
+2025-05-29 15:20:53.85
+c85197fd
+User
+^^^^^^^^^^^^^^^^^^^
+2025-05-29 15:20:53.85
+c85197fd
+User
+File "/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/http/client.py", line 286, in _read_status
+2025-05-29 15:20:53.85
+c85197fd
+User
+line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+2025-05-29 15:20:53.85
+c85197fd
+User
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-05-29 15:20:53.85
+c85197fd
+User
+File "/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/socket.py", line 718, in readinto
+2025-05-29 15:20:53.85
+c85197fd
+User
+return self._sock.recv_into(b)
+2025-05-29 15:20:53.85
+c85197fd
+User
+^^^^^^^^^^^^^^^^^^^^^^^
+2025-05-29 15:20:53.85
+c85197fd
+User
+File "/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/ssl.py", line 1314, in recv_into
+2025-05-29 15:20:53.85
+c85197fd
+User
+return self.read(nbytes, buffer)
+2025-05-29 15:20:53.85
+c85197fd
+User
+^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-05-29 15:20:53.85
+c85197fd
+User
+File "/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/ssl.py", line 1166, in read
+2025-05-29 15:20:53.85
+c85197fd
+User
+return self._sslobj.read(len, buffer)
+2025-05-29 15:20:53.85
+c85197fd
+User
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-05-29 15:20:53.85
+c85197fd
+User
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/gunicorn/workers/base.py", line 204, in handle_abort
+2025-05-29 15:20:53.85
+c85197fd
+User
+sys.exit(1)
+2025-05-29 15:20:53.85
+c85197fd
+User
+SystemExit: 1
+2025-05-29 15:20:53.86
+c85197fd
+User
+[2025-05-29 19:20:53 +0000] [35] [INFO] Worker exiting (pid: 35)
+2025-05-29 15:20:55.03
+c85197fd
+User
+[2025-05-29 19:20:55 +0000] [27] [ERROR] Worker (pid:35) was sent SIGKILL! Perhaps out of memory?
+2025-05-29 15:20:55.43
+c85197fd
+User
+[2025-05-29 19:20:55 +0000] [36] [INFO] Booting worker with pid

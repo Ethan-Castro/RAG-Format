@@ -22,6 +22,10 @@ def get_website_text_content(url: str) -> str:
     try:
         downloaded = trafilatura.fetch_url(url)
         if downloaded:
+            # Limit the size of content we process to prevent memory issues
+            if len(downloaded) > 500000:  # 500KB limit to prevent memory crashes
+                downloaded = downloaded[:500000]
+            
             text = trafilatura.extract(downloaded)
             return text or ""
         return ""
@@ -43,7 +47,7 @@ def scrape_website_content(url):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
         
-        response = requests.get(url, headers=headers, timeout=30)
+        response = requests.get(url, headers=headers, timeout=15)
         response.raise_for_status()
         
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -55,26 +59,30 @@ def scrape_website_content(url):
         # Extract main content using trafilatura
         main_content = get_website_text_content(url)
         
-        # Extract all links exactly like your code
+        # Extract all links exactly like your code (limit to prevent memory issues)
         links = []
         all_links = soup.find_all('a', href=True)
-        for link in all_links:
+        
+        # Limit processing to first 1000 links to prevent memory crashes
+        for i, link in enumerate(all_links[:1000]):
             try:
                 text = link.get_text().strip()
-                href = link.attrs['href'] if 'href' in link.attrs else ''
+                href = link.get('href', '')
                 if text and href:
                     absolute_url = urljoin(url, href)
                     links.append({
-                        'text': text,
-                        'url': absolute_url
+                        'text': text[:200],  # Limit text length
+                        'url': absolute_url[:500]  # Limit URL length
                     })
             except:
                 continue
         
-        # Remove duplicate links based on URL
+        # Remove duplicate links based on URL (limit to 500 unique links)
         unique_links = []
         seen_urls = set()
         for link in links:
+            if len(unique_links) >= 500:  # Limit to prevent memory issues
+                break
             if link['url'] not in seen_urls and link['url'].strip():
                 unique_links.append(link)
                 seen_urls.add(link['url'])
