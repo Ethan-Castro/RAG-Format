@@ -14,9 +14,13 @@ def index():
     """Home page with URL input form"""
     return render_template('index.html')
 
-@app.route('/scrape', methods=['POST'])
+@app.route('/scrape', methods=['GET', 'POST'])
 def scrape():
     """Handle the scraping request"""
+    if request.method == 'GET':
+        # If accessed via GET, redirect to home
+        return redirect(url_for('index'))
+        
     url = request.form.get('url', '').strip()
     
     if not url:
