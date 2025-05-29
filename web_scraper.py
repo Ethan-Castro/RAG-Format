@@ -54,23 +54,44 @@ def scrape_website_content(url):
         # Extract main content using trafilatura
         main_content = get_website_text_content(url)
         
-        # Extract all links
+        # Extract ALL links including hyperlinks - simplified approach
         links = []
         for link in soup.find_all('a', href=True):
-            link_text = link.get_text().strip()
-            link_url = urljoin(url, link['href'])
-            
-            if link_text and link_url:
+            try:
+                # Get text and href safely
+                link_text = ""
+                link_url = ""
+                
+                if hasattr(link, 'get_text'):
+                    link_text = link.get_text().strip()
+                
+                if hasattr(link, 'attrs') and 'href' in link.attrs:
+                    link_url = str(link.attrs['href']).strip()
+                
+                # Skip empty or meaningless URLs
+                if not link_url or link_url in ['#', '', 'javascript:void(0)', 'javascript:;']:
+                    continue
+                
+                # Make relative URLs absolute
+                absolute_url = urljoin(url, link_url)
+                
+                # If no text, use a cleaned version of the URL
+                display_text = link_text if link_text else absolute_url.split('/')[-1] or absolute_url
+                
                 links.append({
-                    'text': link_text,
-                    'url': link_url
+                    'text': display_text,
+                    'url': absolute_url
                 })
+            except Exception as e:
+                # Skip problematic links but continue processing
+                logger.debug(f"Skipping link due to error: {e}")
+                continue
         
-        # Remove duplicate links
+        # Remove duplicate links based on URL
         unique_links = []
         seen_urls = set()
         for link in links:
-            if link['url'] not in seen_urls:
+            if link['url'] not in seen_urls and link['url'].strip():
                 unique_links.append(link)
                 seen_urls.add(link['url'])
         
@@ -78,7 +99,7 @@ def scrape_website_content(url):
             'url': url,
             'title': title_text,
             'content': main_content,
-            'links': unique_links[:100],  # Limit to first 100 unique links
+            'links': unique_links,  # Return all unique links
             'success': True,
             'error': None
         }
