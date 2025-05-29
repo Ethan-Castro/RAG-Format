@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Scraping Results - Website PDF Scraper{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Header with Download Button -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2>
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    Scraping Complete
+                </h2>
+                <p class="text-muted mb-0">Content successfully extracted from the website</p>
+            </div>
+            <div>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Scrape Another
+                </a>
+                <form method="POST" action="{{ url_for('download_pdf') }}" class="d-inline">
+                    <input type="hidden" name="url" value="{{ data.url }}">
+                    <input type="hidden" name="title" value="{{ data.title or '' }}">
+                    <input type="hidden" name="content" value="{{ data.content or '' }}">
+                    <input type="hidden" name="links_data" value="{{ data.links | tojson }}">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-download me-2"></i>
+                        Download PDF
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Website Info Card -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Website Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2 fw-bold">Title:</div>
+                    <div class="col-md-10">{{ data.title or 'No title found' }}</div>
+                </div>
+                <hr class="my-2">
+                <div class="row">
+                    <div class="col-md-2 fw-bold">URL:</div>
+                    <div class="col-md-10">
+                        <a href="{{ data.url }}" target="_blank" class="text-decoration-none">
+                            {{ data.url }}
+                            <i class="fas fa-external-link-alt ms-1 small"></i>
+                        </a>
+                    </div>
+                </div>
+                <hr class="my-2">
+                <div class="row">
+                    <div class="col-md-2 fw-bold">Content Length:</div>
+                    <div class="col-md-10">
+                        {% if data.content %}
+                            {{ data.content | length }} characters
+                        {% else %}
+                            No content extracted
+                        {% endif %}
+                    </div>
+                </div>
+                <hr class="my-2">
+                <div class="row">
+                    <div class="col-md-2 fw-bold">Links Found:</div>
+                    <div class="col-md-10">{{ data.links | length }} unique links</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-file-text me-2"></i>
+                            Extracted Content
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if data.content %}
+                            <div class="content-preview" style="max-height: 500px; overflow-y: auto;">
+                                {% for paragraph in data.content.split('\n') %}
+                                    {% if paragraph.strip() %}
+                                        <p class="mb-2">{{ paragraph.strip() }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                                <p>No main content could be extracted from this website.</p>
+                                <small>This might be due to the website structure or content protection.</small>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Links Sidebar -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-link me-2"></i>
+                            Links Found ({{ data.links | length }})
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        {% if data.links %}
+                            <div class="list-group list-group-flush" style="max-height: 500px; overflow-y: auto;">
+                                {% for link in data.links[:20] %}
+                                    <div class="list-group-item">
+                                        <div class="d-flex w-100 justify-content-between align-items-start">
+                                            <div class="flex-grow-1 me-2">
+                                                <h6 class="mb-1 small">{{ link.text[:50] }}{% if link.text | length > 50 %}...{% endif %}</h6>
+                                                <small class="text-muted text-break">{{ link.url[:60] }}{% if link.url | length > 60 %}...{% endif %}</small>
+                                            </div>
+                                            <a href="{{ link.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                {% if data.links | length > 20 %}
+                                    <div class="list-group-item text-center text-muted">
+                                        <small>... and {{ data.links | length - 20 }} more links</small>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-unlink fa-2x mb-3"></i>
+                                <p>No links found on this website.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Download Card -->
+                <div class="card mt-3">
+                    <div class="card-body text-center">
+                        <h6 class="card-title">
+                            <i class="fas fa-file-pdf me-2"></i>
+                            Ready for Download
+                        </h6>
+                        <p class="card-text small text-muted mb-3">
+                            Your PDF will include the main content and all links found on the page.
+                        </p>
+                        <form method="POST" action="{{ url_for('download_pdf') }}">
+                            <input type="hidden" name="url" value="{{ data.url }}">
+                            <input type="hidden" name="title" value="{{ data.title or '' }}">
+                            <input type="hidden" name="content" value="{{ data.content or '' }}">
+                            <input type="hidden" name="links_data" value="{{ data.links | tojson }}">
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-download me-2"></i>
+                                Generate & Download PDF
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth scrolling for better UX
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

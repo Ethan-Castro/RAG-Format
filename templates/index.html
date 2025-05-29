@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Website PDF Scraper{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-6">
+        <!-- Header Section -->
+        <div class="text-center mb-5">
+            <h1 class="display-4 mb-3">
+                <i class="fas fa-globe me-3"></i>
+                Website to PDF
+            </h1>
+            <p class="lead text-muted">
+                Enter any website URL below and we'll scrape its content and generate a downloadable PDF for you.
+            </p>
+        </div>
+
+        <!-- Main Form -->
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <form action="{{ url_for('scrape') }}" method="POST" id="scrapeForm">
+                    <div class="mb-4">
+                        <label for="url" class="form-label">
+                            <i class="fas fa-link me-2"></i>
+                            Website URL
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-globe"></i>
+                            </span>
+                            <input 
+                                type="url" 
+                                class="form-control form-control-lg" 
+                                id="url" 
+                                name="url" 
+                                placeholder="Enter website URL (e.g., https://example.com)"
+                                required
+                                pattern="https?://.+"
+                            >
+                        </div>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Enter a complete URL starting with http:// or https://
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                            <i class="fas fa-download me-2"></i>
+                            Scrape & Generate PDF
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="row mt-5">
+            <div class="col-md-4 text-center mb-4">
+                <div class="card h-100 border-0">
+                    <div class="card-body">
+                        <i class="fas fa-bolt fa-2x text-primary mb-3"></i>
+                        <h5>Fast Scraping</h5>
+                        <p class="text-muted small">
+                            Quick and efficient content extraction from any website
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <div class="card h-100 border-0">
+                    <div class="card-body">
+                        <i class="fas fa-file-pdf fa-2x text-danger mb-3"></i>
+                        <h5>PDF Generation</h5>
+                        <p class="text-muted small">
+                            Professional PDF formatting with links and content structure
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <div class="card h-100 border-0">
+                    <div class="card-body">
+                        <i class="fas fa-shield-alt fa-2x text-success mb-3"></i>
+                        <h5>Safe & Secure</h5>
+                        <p class="text-muted small">
+                            Your data is processed securely and not stored permanently
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example URLs -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Try These Example URLs
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <button class="btn btn-outline-secondary btn-sm w-100 example-url" 
+                                data-url="https://en.wikipedia.org/wiki/Python_(programming_language)">
+                            <i class="fab fa-wikipedia-w me-2"></i>
+                            Wikipedia - Python
+                        </button>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <button class="btn btn-outline-secondary btn-sm w-100 example-url" 
+                                data-url="https://github.com/python/cpython">
+                            <i class="fab fa-github me-2"></i>
+                            GitHub - CPython
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5>Scraping Website...</h5>
+                <p class="text-muted mb-0">Please wait while we extract the content from the website.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('scrapeForm');
+    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+    
+    // Handle form submission
+    form.addEventListener('submit', function(e) {
+        const url = document.getElementById('url').value.trim();
+        
+        if (!url) {
+            e.preventDefault();
+            return;
+        }
+        
+        // Show loading modal
+        loadingModal.show();
+    });
+    
+    // Handle example URL clicks
+    document.querySelectorAll('.example-url').forEach(button => {
+        button.addEventListener('click', function() {
+            const url = this.getAttribute('data-url');
+            document.getElementById('url').value = url;
+        });
+    });
+    
+    // Auto-format URL
+    document.getElementById('url').addEventListener('blur', function() {
+        let url = this.value.trim();
+        if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+            this.value = 'https://' + url;
+        }
+    });
+});
+</script>
+{% endblock %}
