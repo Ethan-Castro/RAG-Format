@@ -16,108 +16,47 @@
         </div>
 
         <!-- Main Form -->
-        <div class="card shadow">
-            <div class="card-body p-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-5">
                 <form action="{{ url_for('scrape') }}" method="POST" id="scrapeForm">
                     <div class="mb-4">
-                        <label for="url" class="form-label">
-                            <i class="fas fa-link me-2"></i>
-                            Website URL
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="fas fa-globe"></i>
-                            </span>
-                            <input 
-                                type="url" 
-                                class="form-control form-control-lg" 
-                                id="url" 
-                                name="url" 
-                                placeholder="Enter website URL (e.g., https://example.com)"
-                                required
-                                pattern="https?://.+"
-                            >
-                        </div>
-                        <div class="form-text">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Enter a complete URL starting with http:// or https://
-                        </div>
+                        <input 
+                            type="url" 
+                            class="form-control form-control-lg border-0 shadow-sm" 
+                            id="url" 
+                            name="url" 
+                            placeholder="Paste any website URL here..."
+                            required
+                            style="font-size: 1.1rem; padding: 1rem 1.5rem; border-radius: 12px;"
+                        >
                     </div>
 
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
-                            <i class="fas fa-download me-2"></i>
-                            Scrape & Generate PDF
+                        <button type="submit" class="btn btn-primary btn-lg border-0 shadow-sm" id="submitBtn" style="padding: 0.875rem; border-radius: 12px;">
+                            Convert to PDF
                         </button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Features Section -->
-        <div class="row mt-5">
-            <div class="col-md-4 text-center mb-4">
-                <div class="card h-100 border-0">
-                    <div class="card-body">
-                        <i class="fas fa-bolt fa-2x text-primary mb-3"></i>
-                        <h5>Fast Scraping</h5>
-                        <p class="text-muted small">
-                            Quick and efficient content extraction from any website
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 text-center mb-4">
-                <div class="card h-100 border-0">
-                    <div class="card-body">
-                        <i class="fas fa-file-pdf fa-2x text-danger mb-3"></i>
-                        <h5>PDF Generation</h5>
-                        <p class="text-muted small">
-                            Professional PDF formatting with links and content structure
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 text-center mb-4">
-                <div class="card h-100 border-0">
-                    <div class="card-body">
-                        <i class="fas fa-shield-alt fa-2x text-success mb-3"></i>
-                        <h5>Safe & Secure</h5>
-                        <p class="text-muted small">
-                            Your data is processed securely and not stored permanently
-                        </p>
-                    </div>
-                </div>
+        <!-- Quick Examples -->
+        <div class="text-center mt-4">
+            <p class="text-muted small mb-3">Try these examples:</p>
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+                <button class="btn btn-outline-secondary btn-sm example-url" data-url="https://en.wikipedia.org/wiki/Python_(programming_language)">
+                    Wikipedia
+                </button>
+                <button class="btn btn-outline-secondary btn-sm example-url" data-url="https://github.com/python/cpython">
+                    GitHub
+                </button>
+                <button class="btn btn-outline-secondary btn-sm example-url" data-url="https://news.ycombinator.com">
+                    Hacker News
+                </button>
             </div>
         </div>
 
-        <!-- Example URLs -->
-        <div class="card mt-4">
-            <div class="card-header">
-                <h6 class="mb-0">
-                    <i class="fas fa-lightbulb me-2"></i>
-                    Try These Example URLs
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6 mb-2">
-                        <button class="btn btn-outline-secondary btn-sm w-100 example-url" 
-                                data-url="https://en.wikipedia.org/wiki/Python_(programming_language)">
-                            <i class="fab fa-wikipedia-w me-2"></i>
-                            Wikipedia - Python
-                        </button>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <button class="btn btn-outline-secondary btn-sm w-100 example-url" 
-                                data-url="https://github.com/python/cpython">
-                            <i class="fab fa-github me-2"></i>
-                            GitHub - CPython
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+
     </div>
 </div>
 

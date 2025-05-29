@@ -54,33 +54,23 @@ def scrape_website_content(url):
         # Extract main content using trafilatura
         main_content = get_website_text_content(url)
         
-        # Extract ALL links including hyperlinks - simplified approach
+        # Extract ALL links including hyperlinks
         links = []
         for link in soup.find_all('a', href=True):
             try:
-                # Get text and href safely
-                link_text = ""
-                link_url = ""
-                
-                if hasattr(link, 'get_text'):
-                    link_text = link.get_text().strip()
-                
-                if hasattr(link, 'attrs') and 'href' in link.attrs:
-                    link_url = str(link.attrs['href']).strip()
+                link_text = link.get_text().strip()
+                link_url = urljoin(url, link['href'])
                 
                 # Skip empty or meaningless URLs
-                if not link_url or link_url in ['#', '', 'javascript:void(0)', 'javascript:;']:
+                if not link_url or link['href'] in ['#', '', 'javascript:void(0)', 'javascript:;']:
                     continue
                 
-                # Make relative URLs absolute
-                absolute_url = urljoin(url, link_url)
-                
                 # If no text, use a cleaned version of the URL
-                display_text = link_text if link_text else absolute_url.split('/')[-1] or absolute_url
+                display_text = link_text if link_text else link_url.split('/')[-1] or link_url
                 
                 links.append({
                     'text': display_text,
-                    'url': absolute_url
+                    'url': link_url
                 })
             except Exception as e:
                 # Skip problematic links but continue processing
