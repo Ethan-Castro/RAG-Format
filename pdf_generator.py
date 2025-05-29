@@ -93,17 +93,19 @@ def generate_pdf(scraped_data):
             
             story.append(Spacer(1, 20))
         
-        # Add links section
+        # Add links section - format exactly like the user's example
         if scraped_data.get('links'):
-            story.append(Paragraph("Links Found on the Page", heading_style))
+            total_links = len(scraped_data['links'])
+            story.append(Paragraph(f"Links Found ({total_links})", heading_style))
             
-            for i, link in enumerate(scraped_data['links'][:50], 1):  # Limit to 50 links for PDF
+            for link in scraped_data['links']:
                 link_text = link['text'].replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
                 link_url = link['url'].replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
                 
-                # Create a formatted link entry
-                link_entry = f"{i}. <b>{link_text}</b><br/><font color='blue'>{link_url}</font>"
-                story.append(Paragraph(link_entry, link_style))
+                # Format exactly like user's example: text on one line, URL on next line
+                story.append(Paragraph(f"<b>{link_text}</b>", normal_style))
+                story.append(Paragraph(f"<font color='blue'>{link_url}</font>", normal_style))
+                story.append(Spacer(1, 6))  # Small space between links
         
         # Build the PDF
         doc.build(story)

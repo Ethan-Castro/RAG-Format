@@ -4,6 +4,7 @@ from models import ScrapeHistory
 from web_scraper import scrape_website_content
 from pdf_generator import generate_pdf, create_error_pdf
 import logging
+import json
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
@@ -75,10 +76,10 @@ def download_pdf():
         # Parse links data if available
         if links_data:
             try:
-                import json
                 scraped_data['links'] = json.loads(links_data)
             except json.JSONDecodeError:
                 logger.warning("Failed to parse links data")
+                scraped_data['links'] = []
         
         # Generate PDF
         pdf_buffer = generate_pdf(scraped_data)
