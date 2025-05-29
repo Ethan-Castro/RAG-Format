@@ -133,6 +133,22 @@
     transform: scale(1.1);
 }
 
+/* Placeholder text styling */
+.form-control::placeholder {
+    color: #6c757d !important;
+    opacity: 1;
+}
+
+[data-bs-theme="light"] .form-control::placeholder {
+    color: #6c757d !important;
+    opacity: 1;
+}
+
+[data-bs-theme="dark"] .form-control::placeholder {
+    color: #6c757d !important;
+    opacity: 1;
+}
+
 /* Body and layout improvements */
 body {
     background-color: var(--bs-gray-900);
