@@ -94,6 +94,30 @@
     color: #ffffff;
 }
 
+[data-bs-theme="light"] .text-muted {
+    color: #6c757d !important;
+}
+
+[data-bs-theme="light"] .text-break {
+    color: #495057 !important;
+}
+
+[data-bs-theme="light"] a {
+    color: #0d6efd;
+}
+
+[data-bs-theme="light"] .navbar-brand {
+    color: #212529 !important;
+}
+
+[data-bs-theme="light"] .nav-link {
+    color: #495057 !important;
+}
+
+[data-bs-theme="light"] .nav-link:hover {
+    color: #212529 !important;
+}
+
 /* Theme toggle button */
 #themeToggle {
     border-radius: 50%;
