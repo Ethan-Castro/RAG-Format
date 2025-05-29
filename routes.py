@@ -56,36 +56,29 @@ def scrape():
 def download_pdf():
     """Generate and download PDF of scraped content"""
     try:
-        # Get the scraped data from the form (hidden fields)
+        # Get the URL and re-scrape to ensure we have fresh link data
         url = request.form.get('url')
-        title = request.form.get('title')
-        content = request.form.get('content')
-        links_data = request.form.get('links_data')
         
         if not url:
             abort(400, "Missing required data for PDF generation")
         
-        # Reconstruct the scraped data
-        scraped_data = {
-            'url': url,
-            'title': title,
-            'content': content,
-            'links': []
-        }
+        # Re-scrape the website to get fresh data with links
+        scraped_data = scrape_website_content(url)
         
-        # Parse links data if available
-        if links_data:
-            try:
-                scraped_data['links'] = json.loads(links_data)
-            except json.JSONDecodeError:
-                logger.warning("Failed to parse links data")
-                scraped_data['links'] = []
+        if not scraped_data['success']:
+            # If scraping fails, try with minimal data
+            scraped_data = {
+                'url': url,
+                'title': request.form.get('title') or 'Website Content',
+                'content': request.form.get('content') or 'No content available',
+                'links': []
+            }
         
         # Generate PDF
         pdf_buffer = generate_pdf(scraped_data)
         
         # Create a safe filename
-        safe_title = "".join(c for c in (title or "website_content") if c.isalnum() or c in (' ', '-', '_')).rstrip()
+        safe_title = "".join(c for c in (scraped_data.get('title') or "website_links") if c.isalnum() or c in (' ', '-', '_')).rstrip()
         filename = f"{safe_title[:50]}.pdf"
         
         return send_file(
@@ -99,7 +92,7 @@ def download_pdf():
         logger.error(f"Error generating PDF: {e}")
         
         # Try to create an error PDF
-        error_pdf = create_error_pdf(str(e), url or "Unknown URL")
+        error_pdf = create_error_pdf(str(e), request.form.get('url') or "Unknown URL")
         if error_pdf:
             return send_file(
                 error_pdf,

@@ -70,28 +70,13 @@ def generate_pdf(scraped_data):
         
         # Add title
         if scraped_data.get('title'):
-            story.append(Paragraph(f"Website Content: {scraped_data['title']}", title_style))
+            story.append(Paragraph(f"Links from: {scraped_data['title']}", title_style))
         else:
-            story.append(Paragraph("Website Content", title_style))
+            story.append(Paragraph("Website Links", title_style))
         
         # Add URL
         story.append(Paragraph(f"<b>Source URL:</b> {scraped_data['url']}", normal_style))
-        story.append(Spacer(1, 12))
-        
-        # Add main content
-        if scraped_data.get('content'):
-            story.append(Paragraph("Main Content", heading_style))
-            
-            # Split content into paragraphs and clean it
-            content_paragraphs = scraped_data['content'].split('\n')
-            for para in content_paragraphs:
-                para = para.strip()
-                if para:  # Only add non-empty paragraphs
-                    # Escape HTML characters and handle encoding
-                    para = para.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-                    story.append(Paragraph(para, normal_style))
-            
-            story.append(Spacer(1, 20))
+        story.append(Spacer(1, 20))
         
         # Add links section - format exactly like the user's example
         if scraped_data.get('links'):
