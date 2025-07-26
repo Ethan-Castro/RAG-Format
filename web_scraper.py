@@ -239,7 +239,7 @@ def scrape_entire_website(base_url, max_pages=30, max_depth=3):
         unique_links = []
         seen_urls = set()
         for link in all_links:
-            if len(unique_links) >= 2000:  # Limit total links to prevent memory issues
+            if len(unique_links) >= 5000:  # Increased limit for comprehensive scanning
                 break
             if link['url'] not in seen_urls and link['url'].strip():
                 unique_links.append(link)
@@ -248,8 +248,11 @@ def scrape_entire_website(base_url, max_pages=30, max_depth=3):
         # Create comprehensive content summary
         comprehensive_content = f"Comprehensive scan of {base_domain}\n"
         comprehensive_content += f"Pages scraped: {pages_scraped}\n"
+        comprehensive_content += f"Maximum depth reached: {max_depth}\n"
+        comprehensive_content += f"Total links collected from all pages: {len(all_links)}\n"
         comprehensive_content += f"Total unique links found: {len(unique_links)}\n"
-        comprehensive_content += f"Base URL: {base_url}"
+        comprehensive_content += f"Base URL: {base_url}\n"
+        comprehensive_content += f"Runtime: {int(time.time() - start_time)} seconds"
         
         return {
             'url': base_url,

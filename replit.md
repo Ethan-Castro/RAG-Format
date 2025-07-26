@@ -103,9 +103,10 @@ The application is designed to be easily deployable on various platforms with mi
 ### July 26, 2025 - Major Feature Additions and Deployment Optimizations
 - **Added CSV Export**: Users can now export scraped data as CSV files in addition to PDF
 - **Added Comprehensive Website Scraping**: New feature to scrape entire websites by following internal links
+- **True Multi-Level Scanning**: Scraper now goes 3 levels deep, following ALL internal links found on each page
 - **Deployment Optimizations**: 
-  - Reduced comprehensive scan limits: max 20 pages, depth 2, 90-second timeout
-  - Optimized memory usage to prevent worker timeouts in production
-  - Added intelligent link filtering to avoid infinite loops
+  - Balanced scanning: max 30 pages, depth 3, 2-minute timeout
+  - Increased link collection limit to 5000 unique links
+  - Added runtime monitoring and intelligent link filtering
 - **Enhanced UI**: Added dual scraping options (single page vs entire website) with synchronized inputs
-- **Export Options**: Both single page and comprehensive scans support PDF and CSV export
+- **Complete Link Collection**: Both PDF and CSV exports include ALL links found across all scanned pages
