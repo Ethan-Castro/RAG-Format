@@ -117,7 +117,7 @@ def scrape_website_content(url):
             'error': f"An unexpected error occurred: {str(e)}"
         }
 
-def scrape_entire_website(base_url, max_pages=20, max_depth=2):
+def scrape_entire_website(base_url, max_pages=30, max_depth=3):
     """
     Comprehensively scrape an entire website by following internal links
     
@@ -144,9 +144,9 @@ def scrape_entire_website(base_url, max_pages=20, max_depth=2):
         from urllib.parse import urlparse, urljoin
         import time
         
-        # Set time limit for entire operation (90 seconds max)
+        # Set time limit for entire operation (2 minutes max)
         start_time = time.time()
-        max_runtime = 90  # seconds
+        max_runtime = 120  # seconds
         
         # Parse the base URL to determine the domain
         base_domain = urlparse(base_url).netloc
@@ -173,7 +173,7 @@ def scrape_entire_website(base_url, max_pages=20, max_depth=2):
             visited_urls.add(current_url)
             
             try:
-                logger.info(f"Scraping page {pages_scraped + 1}: {current_url}")
+                logger.info(f"Scraping page {pages_scraped + 1} (depth {depth}): {current_url}")
                 
                 # Get the page
                 response = requests.get(current_url, headers=headers, timeout=10)
@@ -208,8 +208,7 @@ def scrape_entire_website(base_url, max_pages=20, max_depth=2):
                             # Add internal links to queue for further exploration
                             if (parsed_link.netloc == base_domain and 
                                 absolute_url not in visited_urls and
-                                depth < max_depth and
-                                len(queue) < max_pages):
+                                depth < max_depth):
                                 
                                 # Avoid common non-content pages
                                 avoid_patterns = [
