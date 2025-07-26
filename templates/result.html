@@ -10,25 +10,47 @@
             <div>
                 <h2>
                     <i class="fas fa-check-circle text-success me-2"></i>
-                    Scraping Complete
+                    {% if data.get('is_comprehensive') %}
+                        Comprehensive Scan Complete
+                    {% else %}
+                        Single Page Scan Complete
+                    {% endif %}
                 </h2>
-                <p class="text-muted mb-0">Content successfully extracted from the website</p>
+                <p class="text-muted mb-0">
+                    {% if data.get('is_comprehensive') %}
+                        Content extracted from {{ data.get('pages_scraped', 1) }} pages across the website
+                    {% else %}
+                        Content successfully extracted from the website
+                    {% endif %}
+                </p>
             </div>
             <div>
                 <a href="{{ url_for('index') }}" class="btn btn-outline-secondary me-2">
                     <i class="fas fa-arrow-left me-2"></i>
                     Scrape Another
                 </a>
-                <form method="POST" action="{{ url_for('download_pdf') }}" class="d-inline">
-                    <input type="hidden" name="url" value="{{ data.url }}">
-                    <input type="hidden" name="title" value="{{ data.title or '' }}">
-                    <input type="hidden" name="content" value="{{ data.content or '' }}">
-                    <input type="hidden" name="links_data" value="{{ data.links | tojson }}">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-download me-2"></i>
-                        Download PDF
-                    </button>
-                </form>
+                <div class="btn-group">
+                    <form method="POST" action="{{ url_for('download_pdf') }}" class="d-inline">
+                        <input type="hidden" name="url" value="{{ data.url }}">
+                        <input type="hidden" name="title" value="{{ data.title or '' }}">
+                        <input type="hidden" name="content" value="{{ data.content or '' }}">
+                        <input type="hidden" name="links_data" value="{{ data.links | tojson }}">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-file-pdf me-2"></i>
+                            PDF
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ url_for('download_csv') }}" class="d-inline">
+                        <input type="hidden" name="url" value="{{ data.url }}">
+                        <input type="hidden" name="title" value="{{ data.title or '' }}">
+                        <input type="hidden" name="content" value="{{ data.content or '' }}">
+                        <input type="hidden" name="links_data" value="{{ data.links | tojson }}">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-file-csv me-2"></i>
+                            CSV
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
 
@@ -148,22 +170,37 @@
                 <div class="card mt-3">
                     <div class="card-body text-center">
                         <h6 class="card-title">
-                            <i class="fas fa-file-pdf me-2"></i>
-                            Ready for Download
+                            <i class="fas fa-download me-2"></i>
+                            Export Options
                         </h6>
                         <p class="card-text small text-muted mb-3">
-                            Your PDF will include the main content and all links found on the page.
+                            Download your data as PDF or CSV format
+                            {% if data.get('is_comprehensive') %}
+                                ({{ data.get('pages_scraped', 1) }} pages scanned)
+                            {% endif %}
                         </p>
-                        <form method="POST" action="{{ url_for('download_pdf') }}">
-                            <input type="hidden" name="url" value="{{ data.url }}">
-                            <input type="hidden" name="title" value="{{ data.title or '' }}">
-                            <input type="hidden" name="content" value="{{ data.content or '' }}">
-                            <input type="hidden" name="links_data" value="{{ data.links | tojson }}">
-                            <button type="submit" class="btn btn-success w-100">
-                                <i class="fas fa-download me-2"></i>
-                                Generate & Download PDF
-                            </button>
-                        </form>
+                        <div class="d-grid gap-2">
+                            <form method="POST" action="{{ url_for('download_pdf') }}">
+                                <input type="hidden" name="url" value="{{ data.url }}">
+                                <input type="hidden" name="title" value="{{ data.title or '' }}">
+                                <input type="hidden" name="content" value="{{ data.content or '' }}">
+                                <input type="hidden" name="links_data" value="{{ data.links | tojson }}">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-file-pdf me-2"></i>
+                                    Download as PDF
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ url_for('download_csv') }}">
+                                <input type="hidden" name="url" value="{{ data.url }}">
+                                <input type="hidden" name="title" value="{{ data.title or '' }}">
+                                <input type="hidden" name="content" value="{{ data.content or '' }}">
+                                <input type="hidden" name="links_data" value="{{ data.links | tojson }}">
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="fas fa-file-csv me-2"></i>
+                                    Download as CSV
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
