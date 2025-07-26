@@ -62,12 +62,16 @@ def download_pdf():
     try:
         # Get the URL and re-scrape to ensure we have fresh link data
         url = request.form.get('url')
+        is_comprehensive = request.form.get('is_comprehensive') == 'true'
         
         if not url:
             abort(400, "Missing required data for PDF generation")
         
-        # Re-scrape the website to get fresh data with links
-        scraped_data = scrape_website_content(url)
+        # Choose scraping method based on scan type
+        if is_comprehensive:
+            scraped_data = scrape_entire_website(url)
+        else:
+            scraped_data = scrape_website_content(url)
         
         if not scraped_data['success']:
             # If scraping fails, try with minimal data
@@ -114,12 +118,16 @@ def download_csv():
     try:
         # Get the URL and re-scrape to ensure we have fresh link data
         url = request.form.get('url')
+        is_comprehensive = request.form.get('is_comprehensive') == 'true'
         
         if not url:
             abort(400, "Missing required data for CSV generation")
         
-        # Re-scrape the website to get fresh data with links
-        scraped_data = scrape_website_content(url)
+        # Choose scraping method based on scan type
+        if is_comprehensive:
+            scraped_data = scrape_entire_website(url)
+        else:
+            scraped_data = scrape_website_content(url)
         
         if not scraped_data['success']:
             # If scraping fails, try with minimal data
