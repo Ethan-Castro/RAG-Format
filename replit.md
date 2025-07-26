@@ -97,3 +97,15 @@ Preferred communication style: Simple, everyday language.
 - Graceful error handling and recovery
 
 The application is designed to be easily deployable on various platforms with minimal configuration changes, supporting both development and production environments.
+
+## Recent Changes
+
+### July 26, 2025 - Major Feature Additions and Deployment Optimizations
+- **Added CSV Export**: Users can now export scraped data as CSV files in addition to PDF
+- **Added Comprehensive Website Scraping**: New feature to scrape entire websites by following internal links
+- **Deployment Optimizations**: 
+  - Reduced comprehensive scan limits: max 20 pages, depth 2, 90-second timeout
+  - Optimized memory usage to prevent worker timeouts in production
+  - Added intelligent link filtering to avoid infinite loops
+- **Enhanced UI**: Added dual scraping options (single page vs entire website) with synchronized inputs
+- **Export Options**: Both single page and comprehensive scans support PDF and CSV export
