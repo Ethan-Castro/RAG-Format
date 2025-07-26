@@ -80,17 +80,35 @@ def generate_pdf(scraped_data):
         
         # Add links section - format exactly like the user's example
         if scraped_data.get('links'):
-            total_links = len(scraped_data['links'])
+            links = scraped_data['links']
+            total_links = len(links)
             story.append(Paragraph(f"Links Found ({total_links})", heading_style))
             
-            for link in scraped_data['links']:
-                link_text = link['text'].replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-                link_url = link['url'].replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-                
-                # Format exactly like user's example: text on one line, URL on next line
-                story.append(Paragraph(f"<b>{link_text}</b>", normal_style))
-                story.append(Paragraph(f"<font color='blue'>{link_url}</font>", normal_style))
-                story.append(Spacer(1, 6))  # Small space between links
+            # Process links in smaller chunks to avoid memory issues
+            for i, link in enumerate(links):
+                try:
+                    link_text = str(link.get('text', '')).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                    link_url = str(link.get('url', '')).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                    
+                    # Limit text length to prevent overflow
+                    if len(link_text) > 100:
+                        link_text = link_text[:97] + "..."
+                    if len(link_url) > 200:
+                        link_url = link_url[:197] + "..."
+                    
+                    # Format exactly like user's example: text on one line, URL on next line
+                    story.append(Paragraph(f"<b>{link_text}</b>", normal_style))
+                    story.append(Paragraph(f"<font color='blue'>{link_url}</font>", normal_style))
+                    story.append(Spacer(1, 6))  # Small space between links
+                    
+                    # Add page break every 50 links to prevent memory issues
+                    if (i + 1) % 50 == 0 and i + 1 < total_links:
+                        story.append(PageBreak())
+                        story.append(Paragraph(f"Links Found (continued - {i+1}/{total_links})", heading_style))
+                        
+                except Exception as e:
+                    logger.warning(f"Error processing link {i}: {e}")
+                    continue
         
         # Build the PDF
         doc.build(story)

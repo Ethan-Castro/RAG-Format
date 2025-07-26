@@ -69,7 +69,9 @@ def download_pdf():
         
         # Choose scraping method based on scan type
         if is_comprehensive:
+            logger.info(f"Generating PDF for comprehensive scan of {url}")
             scraped_data = scrape_entire_website(url)
+            logger.info(f"Comprehensive scan complete: {len(scraped_data.get('links', []))} links found")
         else:
             scraped_data = scrape_website_content(url)
         
@@ -125,7 +127,9 @@ def download_csv():
         
         # Choose scraping method based on scan type
         if is_comprehensive:
+            logger.info(f"Generating CSV for comprehensive scan of {url}")
             scraped_data = scrape_entire_website(url)
+            logger.info(f"Comprehensive scan complete: {len(scraped_data.get('links', []))} links found")
         else:
             scraped_data = scrape_website_content(url)
         
