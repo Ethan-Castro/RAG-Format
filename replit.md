@@ -1,0 +1,99 @@
+# Website PDF Scraper
+
+## Overview
+
+This is a Flask-based web application that allows users to extract links and content from websites and generate PDF reports. The application scrapes website content, extracts links, and provides downloadable PDF documents containing the scraped information.
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.
+
+## System Architecture
+
+### Backend Architecture
+- **Framework**: Flask (Python web framework)
+- **Database**: SQLAlchemy with configurable database backend (defaults to SQLite)
+- **Web Scraping**: Combination of BeautifulSoup, requests, and Trafilatura for content extraction
+- **PDF Generation**: ReportLab for creating PDF documents
+- **Deployment**: WSGI-compatible with ProxyFix middleware for reverse proxy support
+
+### Frontend Architecture
+- **Template Engine**: Jinja2 (Flask's default)
+- **CSS Framework**: Bootstrap 5 with dark theme support
+- **JavaScript**: Vanilla JavaScript for form validation and UI interactions
+- **Icons**: Font Awesome for iconography
+
+### Database Schema
+- **ScrapeHistory Model**: Tracks scraping operations with fields for URL, title, scrape date, success status, and error messages
+
+## Key Components
+
+### Core Modules
+1. **app.py**: Application factory and configuration
+2. **routes.py**: Flask route handlers for web endpoints
+3. **web_scraper.py**: Main scraping logic using multiple libraries
+4. **link_extractor.py**: Specialized link extraction functionality
+5. **pdf_generator.py**: PDF document creation and formatting
+6. **models.py**: SQLAlchemy database models
+
+### Web Scraping Pipeline
+- URL validation and preprocessing
+- Content extraction using Trafilatura for clean text
+- Link extraction using BeautifulSoup
+- Error handling and retry mechanisms
+- User-agent spoofing to avoid blocking
+
+### PDF Generation
+- ReportLab-based PDF creation
+- Custom styling and formatting
+- Support for structured content layout
+- Error PDF generation for failed scrapes
+
+## Data Flow
+
+1. **User Input**: URL submission through web form
+2. **Validation**: URL format validation and preprocessing
+3. **Scraping**: Content and link extraction from target website
+4. **Storage**: Scrape history logged to database
+5. **Presentation**: Results displayed in web interface
+6. **PDF Export**: On-demand PDF generation from scraped data
+
+## External Dependencies
+
+### Python Libraries
+- **Flask**: Web framework and routing
+- **SQLAlchemy**: Database ORM and migrations
+- **BeautifulSoup4**: HTML parsing and navigation
+- **Trafilatura**: Clean text extraction from web pages
+- **ReportLab**: PDF document generation
+- **Requests**: HTTP client for web scraping
+
+### Frontend Dependencies
+- **Bootstrap 5**: CSS framework with dark theme
+- **Font Awesome**: Icon library
+- **Vanilla JavaScript**: Client-side functionality
+
+### Development Dependencies
+- **Werkzeug**: WSGI utilities and development server
+- **Standard Library**: logging, urllib, datetime modules
+
+## Deployment Strategy
+
+### Configuration
+- Environment-based configuration for database URLs and secrets
+- Configurable session secrets for production security
+- Database connection pooling with health checks
+
+### Production Considerations
+- ProxyFix middleware for reverse proxy deployments
+- Configurable database backends (SQLite default, PostgreSQL ready)
+- Error logging and debugging capabilities
+- Session management and security
+
+### Scalability Features
+- Database connection pooling
+- Request timeout configurations
+- Memory-conscious content processing (500KB limit)
+- Graceful error handling and recovery
+
+The application is designed to be easily deployable on various platforms with minimal configuration changes, supporting both development and production environments.
