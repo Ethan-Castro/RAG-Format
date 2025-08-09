@@ -100,13 +100,17 @@ The application is designed to be easily deployable on various platforms with mi
 
 ## Recent Changes
 
-### August 9, 2025 - Image Scraping Feature Addition
+### August 9, 2025 - Image Scraping and LLM-Friendly Display Updates
 - **Added Image Scraping**: New feature to extract image URLs, titles/alt text, and display images
 - **Enhanced PDF Generation**: PDFs now include actual images (up to 20) with titles and URLs
-- **Image Display in Results**: Web interface shows thumbnails of found images with links to originals
+- **Image Display in Results**: Web interface shows thumbnails of found images with direct URL display
 - **CSV Export with Images**: CSV files now include a section for all found images with metadata
 - **Comprehensive Image Collection**: During website scanning, images are collected from all visited pages
 - **Smart Image Handling**: Automatic image format conversion, resizing, and error handling for broken images
+- **LLM-Friendly Display**: All URLs (links and images) now displayed as plain text instead of hyperlinks for better LLM comprehension
+- **Direct URL Display**: Image addresses shown in input fields with copy functionality instead of download links
+- **Visual Progress Bar**: Added animated progress bar with status updates during PDF generation
+- **Interactive Site Preview**: Added modal with iframe to preview websites before PDF generation
 
 ### July 26, 2025 - Major Feature Additions and Deployment Optimizations
 - **Added CSV Export**: Users can now export scraped data as CSV files in addition to PDF

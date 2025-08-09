@@ -160,9 +160,9 @@ def generate_pdf(scraped_data):
                     img_url = img_data.get('url', '')
                     img_title = img_data.get('title', 'Untitled Image')
                     
-                    # Add image title
+                    # Add image title and URL as plain text
                     story.append(Paragraph(f"<b>{img_title}</b>", normal_style))
-                    story.append(Paragraph(f"<font color='blue'>{img_url[:200]}</font>", normal_style))
+                    story.append(Paragraph(f"URL: {img_url[:200]}", normal_style))
                     
                     # Try to download and display the image
                     img_obj, temp_path = download_image(img_url)
@@ -209,9 +209,9 @@ def generate_pdf(scraped_data):
                     if len(link_url) > 200:
                         link_url = link_url[:197] + "..."
                     
-                    # Format exactly like user's example: text on one line, URL on next line
+                    # Format as plain text for LLM readability: text on one line, URL on next line
                     story.append(Paragraph(f"<b>{link_text}</b>", normal_style))
-                    story.append(Paragraph(f"<font color='blue'>{link_url}</font>", normal_style))
+                    story.append(Paragraph(f"URL: {link_url}", normal_style))
                     story.append(Spacer(1, 6))  # Small space between links
                     
                     # Add page break every 50 links to prevent memory issues
