@@ -154,7 +154,7 @@ def scrape_website_content(url):
             'error': f"An unexpected error occurred: {str(e)}"
         }
 
-def scrape_entire_website(base_url, max_pages=30, max_depth=3):
+def scrape_entire_website(base_url, max_pages=20, max_depth=2):
     """
     Comprehensively scrape an entire website by following internal links
     
@@ -181,9 +181,9 @@ def scrape_entire_website(base_url, max_pages=30, max_depth=3):
         from urllib.parse import urlparse, urljoin
         import time
         
-        # Set time limit for entire operation (2 minutes max)
+        # Set time limit for entire operation (90 seconds max to avoid worker timeout)
         start_time = time.time()
-        max_runtime = 120  # seconds
+        max_runtime = 90  # seconds
         
         # Parse the base URL to determine the domain
         base_domain = urlparse(base_url).netloc
@@ -211,11 +211,23 @@ def scrape_entire_website(base_url, max_pages=30, max_depth=3):
             visited_urls.add(current_url)
             
             try:
+                # Check time limit early to avoid worker timeouts
+                if (time.time() - start_time) > (max_runtime - 10):
+                    logger.info(f"Approaching time limit, stopping at {pages_scraped} pages")
+                    break
+                
                 logger.info(f"Scraping page {pages_scraped + 1} (depth {depth}): {current_url}")
                 
-                # Get the page
-                response = requests.get(current_url, headers=headers, timeout=10)
-                response.raise_for_status()
+                # Get the page with shorter timeout and better error handling
+                try:
+                    response = requests.get(current_url, headers=headers, timeout=5)
+                    response.raise_for_status()
+                except (requests.Timeout, requests.ConnectionError) as e:
+                    logger.warning(f"Network timeout/error for {current_url}: {e}")
+                    continue
+                except requests.RequestException as e:
+                    logger.warning(f"Request error for {current_url}: {e}")
+                    continue
                 
                 soup = BeautifulSoup(response.content, 'html.parser')
                 
