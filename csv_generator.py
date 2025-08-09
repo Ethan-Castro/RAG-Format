@@ -23,6 +23,7 @@ def generate_csv(scraped_data):
         writer.writerow(['Title', scraped_data.get('title', 'N/A')])
         writer.writerow(['Scraped Date', datetime.now().strftime('%Y-%m-%d %H:%M:%S')])
         writer.writerow(['Total Links Found', len(scraped_data.get('links', []))])
+        writer.writerow(['Total Images Found', len(scraped_data.get('images', []))])
         writer.writerow([])  # Empty row for separation
         
         # Write links header
@@ -49,6 +50,24 @@ def generate_csv(scraped_data):
                     link.get('url', ''),
                     'Unknown'
                 ])
+        
+        # Add images section if available
+        if scraped_data.get('images'):
+            writer.writerow([])  # Empty row for separation
+            writer.writerow(['Images Found on Website'])
+            writer.writerow(['Image Title', 'Alt Text', 'URL'])
+            
+            images = scraped_data.get('images', [])
+            for img in images:
+                try:
+                    writer.writerow([
+                        img.get('title', '').strip(),
+                        img.get('alt', '').strip(),
+                        img.get('url', '')
+                    ])
+                except Exception as e:
+                    logger.warning(f"Error processing image for CSV: {e}")
+                    continue
         
         # Convert to bytes
         csv_content = output.getvalue()

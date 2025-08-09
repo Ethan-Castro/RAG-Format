@@ -100,6 +100,14 @@ The application is designed to be easily deployable on various platforms with mi
 
 ## Recent Changes
 
+### August 9, 2025 - Image Scraping Feature Addition
+- **Added Image Scraping**: New feature to extract image URLs, titles/alt text, and display images
+- **Enhanced PDF Generation**: PDFs now include actual images (up to 20) with titles and URLs
+- **Image Display in Results**: Web interface shows thumbnails of found images with links to originals
+- **CSV Export with Images**: CSV files now include a section for all found images with metadata
+- **Comprehensive Image Collection**: During website scanning, images are collected from all visited pages
+- **Smart Image Handling**: Automatic image format conversion, resizing, and error handling for broken images
+
 ### July 26, 2025 - Major Feature Additions and Deployment Optimizations
 - **Added CSV Export**: Users can now export scraped data as CSV files in addition to PDF
 - **Added Comprehensive Website Scraping**: New feature to scrape entire websites by following internal links

@@ -1,12 +1,78 @@
 from reportlab.lib.pagesizes import letter, A4
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.lib.colors import black, blue
 from io import BytesIO
 import logging
+import requests
+from PIL import Image as PILImage
+import tempfile
+import os
 
 logger = logging.getLogger(__name__)
+
+def download_image(url, max_width=400, max_height=300):
+    """
+    Download an image from URL and return a ReportLab Image object
+    """
+    try:
+        # Download the image with timeout
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+        response = requests.get(url, headers=headers, timeout=5, stream=True)
+        response.raise_for_status()
+        
+        # Save to temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as tmp_file:
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    tmp_file.write(chunk)
+            tmp_path = tmp_file.name
+        
+        # Open with PIL to check dimensions and convert if needed
+        try:
+            pil_img = PILImage.open(tmp_path)
+            
+            # Convert RGBA to RGB if needed
+            if pil_img.mode in ('RGBA', 'LA', 'P'):
+                rgb_img = PILImage.new('RGB', pil_img.size, (255, 255, 255))
+                if pil_img.mode == 'P':
+                    pil_img = pil_img.convert('RGBA')
+                rgb_img.paste(pil_img, mask=pil_img.split()[-1] if pil_img.mode == 'RGBA' else None)
+                pil_img = rgb_img
+            
+            # Resize if too large
+            width, height = pil_img.size
+            if width > max_width or height > max_height:
+                ratio = min(max_width/width, max_height/height)
+                new_width = int(width * ratio)
+                new_height = int(height * ratio)
+                pil_img = pil_img.resize((new_width, new_height), PILImage.Resampling.LANCZOS)
+            
+            # Save the processed image
+            processed_path = tmp_path.replace('.jpg', '_processed.jpg')
+            pil_img.save(processed_path, 'JPEG', quality=85)
+            
+            # Create ReportLab Image
+            img = Image(processed_path)
+            img.drawHeight = min(pil_img.height, max_height)
+            img.drawWidth = min(pil_img.width, max_width)
+            
+            # Clean up original temp file
+            os.unlink(tmp_path)
+            
+            return img, processed_path
+            
+        except Exception as e:
+            logger.warning(f"Error processing image: {e}")
+            os.unlink(tmp_path)
+            return None, None
+            
+    except Exception as e:
+        logger.warning(f"Error downloading image from {url}: {e}")
+        return None, None
 
 def generate_pdf(scraped_data):
     """
@@ -78,6 +144,53 @@ def generate_pdf(scraped_data):
         story.append(Paragraph(f"<b>Source URL:</b> {scraped_data['url']}", normal_style))
         story.append(Spacer(1, 20))
         
+        # Add images section if available
+        if scraped_data.get('images'):
+            images = scraped_data['images']
+            total_images = len(images)
+            story.append(Paragraph(f"Images Found ({total_images})", heading_style))
+            story.append(Spacer(1, 12))
+            
+            # Track temporary files to clean up
+            temp_files = []
+            
+            # Process images (limit to first 20 to prevent memory issues)
+            for i, img_data in enumerate(images[:20]):
+                try:
+                    img_url = img_data.get('url', '')
+                    img_title = img_data.get('title', 'Untitled Image')
+                    
+                    # Add image title
+                    story.append(Paragraph(f"<b>{img_title}</b>", normal_style))
+                    story.append(Paragraph(f"<font color='blue'>{img_url[:200]}</font>", normal_style))
+                    
+                    # Try to download and display the image
+                    img_obj, temp_path = download_image(img_url)
+                    if img_obj:
+                        story.append(img_obj)
+                        if temp_path:
+                            temp_files.append(temp_path)
+                    else:
+                        story.append(Paragraph("<i>[Image could not be loaded]</i>", normal_style))
+                    
+                    story.append(Spacer(1, 12))
+                    
+                    # Add page break every 5 images
+                    if (i + 1) % 5 == 0 and i + 1 < min(20, total_images):
+                        story.append(PageBreak())
+                        story.append(Paragraph(f"Images (continued - {i+1}/{min(20, total_images)})", heading_style))
+                        
+                except Exception as e:
+                    logger.warning(f"Error processing image {i}: {e}")
+                    continue
+            
+            # If there are more than 20 images, add a note
+            if total_images > 20:
+                story.append(Paragraph(f"<i>Note: Showing first 20 of {total_images} images found</i>", normal_style))
+                story.append(Spacer(1, 12))
+            
+            story.append(PageBreak())
+        
         # Add links section - format exactly like the user's example
         if scraped_data.get('links'):
             links = scraped_data['links']
@@ -112,6 +225,15 @@ def generate_pdf(scraped_data):
         
         # Build the PDF
         doc.build(story)
+        
+        # Clean up temporary image files if any
+        if 'temp_files' in locals():
+            for temp_file in temp_files:
+                try:
+                    if os.path.exists(temp_file):
+                        os.unlink(temp_file)
+                except Exception as e:
+                    logger.warning(f"Could not delete temp file {temp_file}: {e}")
         
         # Get the PDF data
         buffer.seek(0)

@@ -33,6 +33,37 @@ def get_website_text_content(url: str) -> str:
         logger.error(f"Error extracting text content from {url}: {e}")
         return ""
 
+def extract_images_from_page(soup, base_url):
+    """
+    Extract all images from a page with their URLs and alt text
+    """
+    images = []
+    img_tags = soup.find_all('img')
+    
+    # Limit to first 100 images to prevent memory issues
+    for img in img_tags[:100]:
+        try:
+            src = img.get('src', '')
+            if src:
+                # Make URL absolute
+                absolute_url = urljoin(base_url, src)
+                
+                # Get alt text or title as the image name
+                alt_text = img.get('alt', '')
+                title = img.get('title', '')
+                image_name = alt_text or title or 'Untitled Image'
+                
+                images.append({
+                    'url': absolute_url[:500],  # Limit URL length
+                    'title': image_name[:200],  # Limit title length
+                    'alt': alt_text[:200]
+                })
+        except Exception as e:
+            logger.warning(f"Error extracting image: {e}")
+            continue
+    
+    return images
+
 def scrape_website_content(url):
     """
     Scrape website content including title, text, and links
@@ -58,6 +89,9 @@ def scrape_website_content(url):
         
         # Extract main content using trafilatura
         main_content = get_website_text_content(url)
+        
+        # Extract images from the page
+        images = extract_images_from_page(soup, url)
         
         # Extract all links exactly like your code (limit to prevent memory issues)
         links = []
@@ -92,6 +126,7 @@ def scrape_website_content(url):
             'title': title_text,
             'content': main_content,
             'links': unique_links,  # Return all unique links
+            'images': images,  # Return extracted images
             'success': True,
             'error': None
         }
@@ -103,6 +138,7 @@ def scrape_website_content(url):
             'title': None,
             'content': None,
             'links': [],
+            'images': [],
             'success': False,
             'error': f"Failed to fetch the website: {str(e)}"
         }
@@ -113,6 +149,7 @@ def scrape_website_content(url):
             'title': None,
             'content': None,
             'links': [],
+            'images': [],
             'success': False,
             'error': f"An unexpected error occurred: {str(e)}"
         }
@@ -154,6 +191,7 @@ def scrape_entire_website(base_url, max_pages=30, max_depth=3):
         # Keep track of visited URLs and collected links
         visited_urls = set()
         all_links = []
+        all_images = []  # Collect images from all pages
         pages_scraped = 0
         queue = [(base_url, 0)]  # (url, depth)
         website_title = None
@@ -185,6 +223,10 @@ def scrape_entire_website(base_url, max_pages=30, max_depth=3):
                 if pages_scraped == 0:
                     title_tag = soup.find('title')
                     website_title = title_tag.get_text().strip() if title_tag else "Website Content"
+                
+                # Extract images from this page
+                page_images = extract_images_from_page(soup, current_url)
+                all_images.extend(page_images)
                 
                 # Extract all links from this page
                 page_links = soup.find_all('a', href=True)
@@ -245,12 +287,23 @@ def scrape_entire_website(base_url, max_pages=30, max_depth=3):
                 unique_links.append(link)
                 seen_urls.add(link['url'])
         
+        # Remove duplicate images based on URL
+        unique_images = []
+        seen_image_urls = set()
+        for img in all_images:
+            if len(unique_images) >= 500:  # Limit images to prevent memory issues
+                break
+            if img['url'] not in seen_image_urls and img['url'].strip():
+                unique_images.append(img)
+                seen_image_urls.add(img['url'])
+        
         # Create comprehensive content summary
         comprehensive_content = f"Comprehensive scan of {base_domain}\n"
         comprehensive_content += f"Pages scraped: {pages_scraped}\n"
         comprehensive_content += f"Maximum depth reached: {max_depth}\n"
         comprehensive_content += f"Total links collected from all pages: {len(all_links)}\n"
         comprehensive_content += f"Total unique links found: {len(unique_links)}\n"
+        comprehensive_content += f"Total images found: {len(unique_images)}\n"
         comprehensive_content += f"Base URL: {base_url}\n"
         comprehensive_content += f"Runtime: {int(time.time() - start_time)} seconds"
         
@@ -259,6 +312,7 @@ def scrape_entire_website(base_url, max_pages=30, max_depth=3):
             'title': website_title,
             'content': comprehensive_content,
             'links': unique_links,
+            'images': unique_images,  # Return collected images
             'pages_scraped': pages_scraped,
             'success': True,
             'error': None
@@ -271,6 +325,7 @@ def scrape_entire_website(base_url, max_pages=30, max_depth=3):
             'title': None,
             'content': None,
             'links': [],
+            'images': [],
             'pages_scraped': 0,
             'success': False,
             'error': f"Comprehensive scraping failed: {str(e)}"

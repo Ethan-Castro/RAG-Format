@@ -95,6 +95,13 @@
                     <div class="col-md-2 fw-bold">Links Found:</div>
                     <div class="col-md-10">{{ data.links | length }} unique links</div>
                 </div>
+                {% if data.images %}
+                <hr class="my-2">
+                <div class="row">
+                    <div class="col-md-2 fw-bold">Images Found:</div>
+                    <div class="col-md-10">{{ data.images | length }} images</div>
+                </div>
+                {% endif %}
             </div>
         </div>
 
@@ -207,6 +214,48 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Images Section (if available) -->
+        {% if data.images %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-image me-2"></i>
+                    Images Found ({{ data.images | length }})
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    {% for image in data.images[:12] %}
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center p-2">
+                                <small class="text-muted d-block mb-2 text-truncate" title="{{ image.title }}">
+                                    {{ image.title[:30] }}{% if image.title | length > 30 %}...{% endif %}
+                                </small>
+                                <div class="bg-light p-2 rounded" style="min-height: 100px; display: flex; align-items: center; justify-content: center;">
+                                    <img src="{{ image.url }}" 
+                                         alt="{{ image.alt or image.title }}" 
+                                         class="img-fluid"
+                                         style="max-height: 150px; max-width: 100%;"
+                                         onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\'%3E%3Crect width=\'100\' height=\'100\' fill=\'%23ddd\'/%3E%3Ctext x=\'50\' y=\'50\' font-family=\'Arial\' font-size=\'12\' fill=\'%23999\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3EImage Not Found%3C/text%3E%3C/svg%3E';">
+                                </div>
+                                <a href="{{ image.url }}" target="_blank" class="btn btn-sm btn-outline-primary mt-2">
+                                    <i class="fas fa-external-link-alt"></i> View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if data.images | length > 12 %}
+                <div class="text-center mt-3">
+                    <small class="text-muted">... and {{ data.images | length - 12 }} more images</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
