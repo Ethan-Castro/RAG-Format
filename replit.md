@@ -112,7 +112,7 @@ The application is designed to be easily deployable on various platforms with mi
 - **Direct URL Display**: Image addresses shown in input fields with copy functionality instead of download links
 - **Visual Progress Bar**: Added animated progress bar with status updates during PDF generation
 - **Interactive Site Preview**: Added modal with iframe to preview websites before PDF generation
-- **Image Hosting**: Uploaded images are now hosted on imgur for permanent, reliable external URLs
+- **Image Hosting**: Uploaded images are now hosted on PostImages.org for permanent, reliable external URLs
 
 ### July 26, 2025 - Major Feature Additions and Deployment Optimizations
 - **Added CSV Export**: Users can now export scraped data as CSV files in addition to PDF

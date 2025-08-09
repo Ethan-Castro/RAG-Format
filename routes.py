@@ -206,7 +206,7 @@ def upload_images():
     """Handle image uploads and generate PDF"""
     try:
         import requests
-        import base64
+        from bs4 import BeautifulSoup
         
         # Check if files were uploaded
         if 'images' not in request.files:
@@ -223,10 +223,6 @@ def upload_images():
         image_data = []
         allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
         
-        # Imgur anonymous upload endpoint
-        imgur_upload_url = "https://api.imgur.com/3/image"
-        imgur_client_id = "c1c8e67f9ad3e54"  # Public client ID for anonymous uploads
-        
         for file in files:
             if file and file.filename:
                 # Get file extension
@@ -236,28 +232,31 @@ def upload_images():
                 if file_ext in allowed_extensions:
                     try:
                         # Read file data
-                        file_data = file.read()
+                        file.seek(0)
+                        file_content = file.read()
                         
-                        # Convert to base64
-                        b64_image = base64.b64encode(file_data).decode('utf-8')
+                        # Upload to PostImages.org
+                        upload_url = "https://postimages.org/json/rr"
                         
-                        # Upload to imgur
-                        headers = {
-                            'Authorization': f'Client-ID {imgur_client_id}'
+                        files_data = {
+                            'file': (filename, file_content, f'image/{file_ext}')
                         }
                         
-                        payload = {
-                            'image': b64_image,
-                            'type': 'base64',
-                            'title': filename
+                        # PostImages parameters
+                        data = {
+                            'numfiles': '1',
+                            'optsize': '0',  # Don't resize
+                            'expire': '0',   # Never expire
+                            'upload': 'Upload'
                         }
                         
-                        response = requests.post(imgur_upload_url, headers=headers, data=payload, timeout=10)
+                        response = requests.post(upload_url, files=files_data, data=data, timeout=15)
                         
                         if response.status_code == 200:
-                            imgur_data = response.json()
-                            if imgur_data.get('success'):
-                                hosted_url = imgur_data['data']['link']
+                            result = response.json()
+                            if result.get('status') == 'OK' and result.get('url'):
+                                # Get the direct image URL
+                                hosted_url = result.get('url')
                                 
                                 # Get original filename without extension for title
                                 title = os.path.splitext(filename)[0]
@@ -268,14 +267,14 @@ def upload_images():
                                     'alt': title,
                                     'filename': filename
                                 })
-                                logger.info(f"Successfully uploaded {filename} to imgur: {hosted_url}")
+                                logger.info(f"Successfully uploaded {filename} to PostImages: {hosted_url}")
                             else:
-                                logger.warning(f"Failed to upload {filename} to imgur")
+                                logger.warning(f"Failed to upload {filename} to PostImages: {result}")
                         else:
-                            logger.warning(f"Imgur upload failed for {filename}: {response.status_code}")
+                            logger.warning(f"PostImages upload failed for {filename}: {response.status_code}")
                             
                     except Exception as e:
-                        logger.error(f"Error uploading {filename} to imgur: {e}")
+                        logger.error(f"Error uploading {filename}: {e}")
                         continue
         
         if not image_data:
