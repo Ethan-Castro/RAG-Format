@@ -1,0 +1,117 @@
+# Integrating **Cloudinary** into your Python-based Replit project
+
+Below is a copy-and-paste recipe that swaps your current Imgur logic for Cloudinary, giving you **permanent storage**, **on-the-fly transformations**, and a multi-CDN image URL in a couple of minutes.
+
+***
+
+## 1. One-time setup
+
+1. Create a free Cloudinary account.  
+2. In the dashboard, note your:  
+   -  **Cloud Name**  
+   -  **API Key**  
+   -  **API Secret**  
+3. In Replit › “Secrets” tab, add  
+   ```
+   CLOUDINARY_CLOUD   = your-cloud-name
+   CLOUDINARY_KEY     = your-api-key
+   CLOUDINARY_SECRET  = your-api-secret
+   ```
+
+***
+
+## 2. Install dependencies
+
+```bash
+pip install cloudinary python-multipart fastapi uvicorn
+```
+
+Cloudinary’s SDK bundles `requests`, so no extra HTTP library is needed.
+
+***
+
+## 3. Upload utility
+
+```python
+# cloudinary_upload.py
+import cloudinary
+import cloudinary.uploader
+import os
+
+# Configure once at import time
+cloudinary.config(
+    cloud_name = os.getenv("CLOUDINARY_CLOUD"),
+    api_key    = os.getenv("CLOUDINARY_KEY"),
+    api_secret = os.getenv("CLOUDINARY_SECRET"),
+    secure     = True           # always generate https:// URLs
+)
+
+def upload_cloudinary(file_bytes: bytes, filename: str = "image.png") -> str:
+    """
+    Push raw image bytes to Cloudinary and return the secure URL.
+    """
+    res = cloudinary.uploader.upload(
+        file_bytes,
+        public_id = None,        # let Cloudinary auto-generate a unique ID
+        resource_type = "image",
+        overwrite = False
+    )
+    return res["secure_url"]     # ready to embed/convert
+```
+
+***
+
+## 4. Minimal FastAPI endpoint
+
+```python
+# main.py
+from fastapi import FastAPI, File, UploadFile, HTTPException
+from cloudinary_upload import upload_cloudinary
+
+app = FastAPI()
+
+@app.post("/api/upload")
+async def upload(file: UploadFile = File(...)):
+    try:
+        data = await file.read()
+        url  = upload_cloudinary(data, file.filename)
+        return {"imageUrl": url}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+```
+
+Run inside Replit (or locally):
+
+```bash
+uvicorn main:app --host 0.0.0.0 --port 3000
+```
+
+***
+
+## 5. Using the returned URL
+
+Cloudinary URLs can be modified on the fly. Example:
+
+```html
+/image/upload/w_600,q_auto/.png">
+```
+
+-  `w_600` resizes to 600 px width.  
+-  `q_auto` auto-optimizes JPEG/WEBP quality.  
+Explore the **Transformation URL Builder** in the dashboard for more options (crop, blur, watermark, etc.).
+
+***
+
+## 6. Good-to-know limits (free tier)
+
+- 25 GB total storage and bandwidth.  
+- 100 transformations/day (simple resize counts as one).  
+- Max upload size: 100 MB per file.
+
+If you exceed a limit Cloudinary returns HTTP 420 or 400 errors—handle those with a polite message and consider caching or upgrading.
+
+***
+
+### You’re set!
+
+Replace the Imgur call in your existing FastAPI route with `upload_cloudinary`, keep the same JSON response shape, and your front-end or converter logic won’t need to change at all.

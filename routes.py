@@ -205,8 +205,16 @@ def upload_images_page():
 def upload_images():
     """Handle image uploads and generate PDF"""
     try:
-        import requests
-        from bs4 import BeautifulSoup
+        import cloudinary
+        import cloudinary.uploader
+        
+        # Configure Cloudinary
+        cloudinary.config(
+            cloud_name=os.environ.get("CLOUDINARY_CLOUD"),
+            api_key=os.environ.get("CLOUDINARY_KEY"),
+            api_secret=os.environ.get("CLOUDINARY_SECRET"),
+            secure=True
+        )
         
         # Check if files were uploaded
         if 'images' not in request.files:
@@ -235,46 +243,29 @@ def upload_images():
                         file.seek(0)
                         file_content = file.read()
                         
-                        # Upload to PostImages.org
-                        upload_url = "https://postimages.org/json/rr"
+                        # Upload to Cloudinary
+                        upload_result = cloudinary.uploader.upload(
+                            file_content,
+                            resource_type="image",
+                            public_id=None,  # Let Cloudinary generate unique ID
+                            overwrite=False
+                        )
                         
-                        files_data = {
-                            'file': (filename, file_content, f'image/{file_ext}')
-                        }
+                        hosted_url = upload_result["secure_url"]
                         
-                        # PostImages parameters
-                        data = {
-                            'numfiles': '1',
-                            'optsize': '0',  # Don't resize
-                            'expire': '0',   # Never expire
-                            'upload': 'Upload'
-                        }
+                        # Get original filename without extension for title
+                        title = os.path.splitext(filename)[0]
                         
-                        response = requests.post(upload_url, files=files_data, data=data, timeout=15)
+                        image_data.append({
+                            'title': title,
+                            'url': hosted_url,
+                            'alt': title,
+                            'filename': filename
+                        })
+                        logger.info(f"Successfully uploaded {filename} to Cloudinary: {hosted_url}")
                         
-                        if response.status_code == 200:
-                            result = response.json()
-                            if result.get('status') == 'OK' and result.get('url'):
-                                # Get the direct image URL
-                                hosted_url = result.get('url')
-                                
-                                # Get original filename without extension for title
-                                title = os.path.splitext(filename)[0]
-                                
-                                image_data.append({
-                                    'title': title,
-                                    'url': hosted_url,
-                                    'alt': title,
-                                    'filename': filename
-                                })
-                                logger.info(f"Successfully uploaded {filename} to PostImages: {hosted_url}")
-                            else:
-                                logger.warning(f"Failed to upload {filename} to PostImages: {result}")
-                        else:
-                            logger.warning(f"PostImages upload failed for {filename}: {response.status_code}")
-                            
                     except Exception as e:
-                        logger.error(f"Error uploading {filename}: {e}")
+                        logger.error(f"Error uploading {filename} to Cloudinary: {e}")
                         continue
         
         if not image_data:
