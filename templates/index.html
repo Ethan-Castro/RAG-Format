@@ -7,11 +7,17 @@
     <div class="col-lg-8 col-xl-6">
         <!-- Header Section -->
         <div class="text-center mb-5">
-            <h1 class="display-5 mb-3 fw-light">
-                Convert any links and titles on a website to PDF
+            <div class="d-inline-block p-3 rounded-circle bg-primary bg-opacity-10 mb-3">
+                <i class="fas fa-link text-primary" style="font-size: 2.5rem;" aria-hidden="true"></i>
+            </div>
+            <h1 class="display-4 mb-3" style="font-weight: 700;">
+                Website Link Scraper
             </h1>
-            <p class="lead text-muted fs-6">
-                Simply paste a URL and get a clean, readable PDF with all extracted links and titles
+            <p class="lead text-muted" style="font-weight: 400;">
+                Extract links and content from any website with ease
+            </p>
+            <p class="text-muted">
+                Generate downloadable PDFs or CSV files with all extracted data
             </p>
         </div>
 
@@ -20,47 +26,74 @@
             <div class="card-body p-5">
                 <form action="{{ url_for('scrape') }}" method="POST" id="scrapeForm">
                     <div class="mb-4">
+                        <label for="url" class="form-label text-muted small mb-2">
+                            <i class="fas fa-globe me-1" aria-hidden="true"></i>
+                            Enter Website URL
+                        </label>
                         <input 
                             type="url" 
                             class="form-control form-control-lg border-0 shadow-sm" 
                             id="url" 
                             name="url" 
-                            placeholder="Paste any website URL here..."
+                            placeholder="https://example.com"
                             required
+                            aria-label="Website URL for single page scraping"
+                            aria-describedby="urlHelp"
                             style="font-size: 1.1rem; padding: 1rem 1.5rem; border-radius: 12px;"
                         >
+                        <small id="urlHelp" class="form-text text-muted mt-1">
+                            Scrapes only the current page content
+                        </small>
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg border-0 shadow-sm" id="submitBtn" style="padding: 0.875rem; border-radius: 12px;">
-                            <i class="fas fa-link me-2"></i>
-                            Scrape Current Page
+                        <button type="submit" class="btn btn-primary btn-lg border-0 shadow-sm" id="submitBtn" 
+                                style="padding: 0.875rem; border-radius: 12px;"
+                                aria-label="Scrape current page only">
+                            <i class="fas fa-file-alt me-2" aria-hidden="true"></i>
+                            <span>Scrape Current Page</span>
                         </button>
                     </div>
                 </form>
                 
+                <!-- Divider -->
+                <div class="position-relative my-4">
+                    <hr class="text-muted">
+                    <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">
+                        OR
+                    </span>
+                </div>
+                
                 <!-- Comprehensive Scraping Form -->
-                <form action="{{ url_for('scrape_entire') }}" method="POST" id="scrapeEntireForm" class="mt-3">
+                <form action="{{ url_for('scrape_entire') }}" method="POST" id="scrapeEntireForm">
                     <div class="mb-4">
+                        <label for="url_entire" class="form-label text-muted small mb-2">
+                            <i class="fas fa-sitemap me-1" aria-hidden="true"></i>
+                            Scrape Entire Website (Multi-page)
+                        </label>
                         <input 
                             type="url" 
                             class="form-control form-control-lg border-0 shadow-sm" 
                             id="url_entire" 
                             name="url" 
-                            placeholder="Paste any website URL here..."
+                            placeholder="https://example.com"
                             required
+                            aria-label="Website URL for comprehensive scraping"
+                            aria-describedby="urlEntireHelp"
                             style="font-size: 1.1rem; padding: 1rem 1.5rem; border-radius: 12px;"
                         >
+                        <small id="urlEntireHelp" class="form-text text-muted mt-1">
+                            Follows internal links up to 3 levels deep (max 30 pages)
+                        </small>
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-success btn-lg border-0 shadow-sm" id="submitEntireBtn" style="padding: 0.875rem; border-radius: 12px;">
-                            <i class="fas fa-globe me-2"></i>
-                            Scrape Entire Website
+                        <button type="submit" class="btn btn-success btn-lg border-0 shadow-sm" id="submitEntireBtn" 
+                                style="padding: 0.875rem; border-radius: 12px;"
+                                aria-label="Scrape entire website including subpages">
+                            <i class="fas fa-sitemap me-2" aria-hidden="true"></i>
+                            <span>Scrape Entire Website</span>
                         </button>
-                        <small class="text-muted text-center">
-                            This will follow internal links and scrape multiple pages (may take longer)
-                        </small>
                     </div>
                 </form>
                 

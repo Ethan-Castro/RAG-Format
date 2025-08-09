@@ -4,27 +4,47 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="mb-0">
-                    <i class="fas fa-upload me-2"></i>
-                    Upload Images for PDF Generation
+    <div class="col-lg-8">
+        <!-- Header Section -->
+        <div class="text-center mb-5">
+            <div class="d-inline-block p-3 rounded-circle bg-success bg-opacity-10 mb-3">
+                <i class="fas fa-cloud-upload-alt text-success" style="font-size: 2.5rem;" aria-hidden="true"></i>
+            </div>
+            <h1 class="display-5 mb-3" style="font-weight: 700;">
+                Image Upload & PDF Generator
+            </h1>
+            <p class="lead text-muted" style="font-weight: 400;">
+                Upload images and get a PDF with hosted URLs
+            </p>
+        </div>
+        
+        <div class="card border-0 shadow-lg">
+            <div class="card-header bg-transparent border-0 pt-4 pb-0">
+                <h4 class="mb-0" style="font-weight: 600;">
+                    <i class="fas fa-images me-2 text-primary" aria-hidden="true"></i>
+                    Select Your Images
                 </h4>
             </div>
-            <div class="card-body">
+            <div class="card-body p-4">
                 <form method="POST" action="{{ url_for('upload_images') }}" enctype="multipart/form-data" id="uploadForm">
                     <div class="mb-4">
-                        <label for="images" class="form-label">Select Images to Upload</label>
+                        <label for="images" class="form-label text-muted mb-3">
+                            <i class="fas fa-folder-open me-1" aria-hidden="true"></i>
+                            Choose images from your device
+                        </label>
                         <input type="file" 
-                               class="form-control" 
+                               class="form-control form-control-lg" 
                                id="images" 
                                name="images" 
                                multiple 
                                accept="image/*"
-                               required>
-                        <small class="text-muted">
-                            You can select multiple images at once. Supported formats: JPG, PNG, GIF, WebP
+                               required
+                               aria-label="Select multiple image files"
+                               aria-describedby="imagesHelp"
+                               style="padding: 0.75rem;">
+                        <small id="imagesHelp" class="form-text text-muted mt-2">
+                            <i class="fas fa-info-circle me-1" aria-hidden="true"></i>
+                            Select multiple images at once • Supported: JPG, PNG, GIF, WebP
                         </small>
                     </div>
                     
@@ -34,9 +54,11 @@
                     </div>
                     
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary" id="uploadBtn">
-                            <i class="fas fa-cloud-upload-alt me-2"></i>
-                            Upload and Generate PDF
+                        <button type="submit" class="btn btn-primary btn-lg" id="uploadBtn" 
+                                style="padding: 0.875rem; border-radius: 12px;"
+                                aria-label="Upload images and generate PDF">
+                            <i class="fas fa-cloud-upload-alt me-2" aria-hidden="true"></i>
+                            <span>Upload and Generate PDF</span>
                         </button>
                     </div>
                 </form>
@@ -51,28 +73,50 @@
         </div>
         
         <!-- Instructions -->
-        <div class="card mt-4">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="fas fa-info-circle me-2"></i>
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-4" style="font-weight: 600;">
+                    <i class="fas fa-info-circle me-2 text-info" aria-hidden="true"></i>
                     How It Works
                 </h5>
-                <ol class="mb-0">
-                    <li>Select multiple images from your computer</li>
-                    <li>Images will be uploaded to Cloudinary for professional hosting</li>
-                    <li>Each image will retain its original filename as the title</li>
-                    <li>A PDF will be generated with:
-                        <ul>
-                            <li>The image displayed</li>
-                            <li>The image title (filename)</li>
-                            <li>The Cloudinary URL (permanent CDN link)</li>
-                        </ul>
-                    </li>
-                    <li>Download the PDF with all image information</li>
-                </ol>
-                <div class="alert alert-info mt-3 mb-0">
-                    <i class="fas fa-cloud me-2"></i>
-                    <small>Images are hosted on Cloudinary's professional CDN with permanent URLs that you can use anywhere.</small>
+                <div class="timeline">
+                    <div class="d-flex mb-3">
+                        <div class="me-3">
+                            <div class="rounded-circle bg-primary bg-opacity-10 p-2 text-center" style="width: 40px; height: 40px;">
+                                <span class="text-primary fw-bold">1</span>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">Select Images</h6>
+                            <p class="text-muted small mb-0">Choose multiple images from your computer</p>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <div class="me-3">
+                            <div class="rounded-circle bg-primary bg-opacity-10 p-2 text-center" style="width: 40px; height: 40px;">
+                                <span class="text-primary fw-bold">2</span>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">Cloud Upload</h6>
+                            <p class="text-muted small mb-0">Images uploaded to Cloudinary CDN</p>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <div class="me-3">
+                            <div class="rounded-circle bg-primary bg-opacity-10 p-2 text-center" style="width: 40px; height: 40px;">
+                                <span class="text-primary fw-bold">3</span>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">PDF Generation</h6>
+                            <p class="text-muted small mb-0">Creates PDF with images, titles, and permanent URLs</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-info mt-3 mb-0" role="alert">
+                    <i class="fas fa-cloud me-2" aria-hidden="true"></i>
+                    <strong>Professional Hosting:</strong> Your images get permanent URLs on Cloudinary's global CDN
                 </div>
             </div>
         </div>
