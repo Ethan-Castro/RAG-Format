@@ -100,6 +100,11 @@ The application is designed to be easily deployable on various platforms with mi
 
 ## Recent Changes
 
+### August 9, 2025 - Security Fix and History Feature Removal
+- **Fixed XSS Vulnerability**: Replaced unsafe innerHTML usage in showAlert function with safe DOM manipulation methods using createElement and textContent
+- **Removed History Feature**: Removed the history viewing page and navigation link per user request, while keeping database logging for internal tracking
+- **Enhanced Security**: All user-controlled data displayed in alerts is now properly sanitized through DOM text nodes
+
 ### August 9, 2025 - Image Scraping, Upload Feature, and LLM-Friendly Display Updates
 - **Added Image Scraping**: New feature to extract image URLs, titles/alt text, and display images from websites
 - **Image Upload Feature**: New capability to upload multiple images, host them online, and generate PDFs with hosted URLs

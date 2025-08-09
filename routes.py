@@ -340,16 +340,7 @@ def scrape_entire():
         flash(f"An unexpected error occurred: {str(e)}", 'error')
         return redirect(url_for('index'))
 
-@app.route('/history')
-def history():
-    """Show scraping history"""
-    try:
-        records = ScrapeHistory.query.order_by(ScrapeHistory.scrape_date.desc()).limit(50).all()
-        return render_template('history.html', records=records)
-    except Exception as e:
-        logger.error(f"Error fetching history: {e}")
-        flash("Failed to load history", 'error')
-        return redirect(url_for('index'))
+
 
 @app.errorhandler(404)
 def not_found_error(error):
