@@ -1,7 +1,7 @@
-// Main JavaScript file for Website PDF Scraper
+// Main JavaScript file for RAG Format
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Website PDF Scraper loaded');
+    console.log('RAG Format loaded');
     
     // Initialize tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

@@ -1,8 +1,8 @@
-# Website PDF Scraper
+# RAG Format
 
 ## Overview
 
-This is a Flask-based web application that allows users to extract links and content from websites and generate PDF reports. The application scrapes website content, extracts links, and provides downloadable PDF documents containing the scraped information.
+This is a Flask-based web application that transforms web content into AI-ready format for RAG (Retrieval-Augmented Generation) systems. The application extracts links, content, and images from websites and generates structured PDF/CSV documents optimized for AI applications and LLM consumption.
 
 ## User Preferences
 
