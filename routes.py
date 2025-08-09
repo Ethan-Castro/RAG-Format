@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash, send_file, abort
+from flask import render_template, request, redirect, url_for, flash, send_file, abort, session
 from app import app, db
 from models import ScrapeHistory
 from web_scraper import scrape_website_content, scrape_entire_website

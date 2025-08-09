@@ -100,14 +100,15 @@ The application is designed to be easily deployable on various platforms with mi
 
 ## Recent Changes
 
-### August 9, 2025 - Timeout Fixes and Performance Optimizations
-- **Fixed Worker Timeout Issues**: Reduced comprehensive scraping time limit from 30 minutes to 90 seconds to prevent Gunicorn worker timeouts
-- **Improved Network Error Handling**: Added specific timeout and connection error handling for individual page requests
-- **Optimized Scraping Parameters**: Reduced default max pages from 30 to 20 and max depth from 3 to 2 levels
-- **Added Session-Based Progress Tracking**: Prevents multiple simultaneous comprehensive scans that could overwhelm the server
-- **Enhanced Timeout Management**: Early timeout detection with 10-second buffer to gracefully stop before worker timeout
-- **Reduced Request Timeouts**: Lowered individual page timeout from 10 to 5 seconds for faster failure detection
-- **Better Error Recovery**: Specific handling for network timeouts, connection errors, and request exceptions
+### August 9, 2025 - Enhanced Comprehensive Scraping Capabilities
+- **Increased Runtime Capacity**: Extended comprehensive scraping time limit to 4 minutes (240 seconds) for more thorough scanning
+- **Enhanced Scanning Depth**: Restored max pages to 50 and depth to 3 levels for comprehensive website exploration
+- **Improved Data Collection**: Increased link collection limit to 10,000 and image collection to 1,000 for extensive content gathering
+- **Optimized Performance**: Reduced inter-page delay from 0.1 to 0.05 seconds for faster scanning while maintaining server respect
+- **Better Timeout Management**: 30-second buffer before timeout to ensure graceful completion
+- **Robust Error Handling**: Specific timeout and connection error handling for individual page requests
+- **Session-Based Progress Tracking**: Prevents multiple simultaneous comprehensive scans
+- **Worker Timeout Protection**: Enhanced early timeout detection to prevent worker crashes
 
 ### August 9, 2025 - Image Scraping, Upload Feature, and LLM-Friendly Display Updates
 - **Added Image Scraping**: New feature to extract image URLs, titles/alt text, and display images from websites

@@ -154,7 +154,7 @@ def scrape_website_content(url):
             'error': f"An unexpected error occurred: {str(e)}"
         }
 
-def scrape_entire_website(base_url, max_pages=20, max_depth=2):
+def scrape_entire_website(base_url, max_pages=50, max_depth=3):
     """
     Comprehensively scrape an entire website by following internal links
     
@@ -181,9 +181,9 @@ def scrape_entire_website(base_url, max_pages=20, max_depth=2):
         from urllib.parse import urlparse, urljoin
         import time
         
-        # Set time limit for entire operation (90 seconds max to avoid worker timeout)
+        # Set time limit for entire operation (4 minutes max for comprehensive scanning)
         start_time = time.time()
-        max_runtime = 90  # seconds
+        max_runtime = 240  # seconds
         
         # Parse the base URL to determine the domain
         base_domain = urlparse(base_url).netloc
@@ -212,7 +212,7 @@ def scrape_entire_website(base_url, max_pages=20, max_depth=2):
             
             try:
                 # Check time limit early to avoid worker timeouts
-                if (time.time() - start_time) > (max_runtime - 10):
+                if (time.time() - start_time) > (max_runtime - 30):
                     logger.info(f"Approaching time limit, stopping at {pages_scraped} pages")
                     break
                 
@@ -283,7 +283,7 @@ def scrape_entire_website(base_url, max_pages=20, max_depth=2):
                 
                 # Add small delay to be respectful to the server
                 import time
-                time.sleep(0.1)
+                time.sleep(0.05)  # Reduced delay for faster scanning
                 
             except Exception as e:
                 logger.warning(f"Error scraping page {current_url}: {e}")
@@ -293,7 +293,7 @@ def scrape_entire_website(base_url, max_pages=20, max_depth=2):
         unique_links = []
         seen_urls = set()
         for link in all_links:
-            if len(unique_links) >= 5000:  # Increased limit for comprehensive scanning
+            if len(unique_links) >= 10000:  # Increased limit for comprehensive scanning
                 break
             if link['url'] not in seen_urls and link['url'].strip():
                 unique_links.append(link)
@@ -303,7 +303,7 @@ def scrape_entire_website(base_url, max_pages=20, max_depth=2):
         unique_images = []
         seen_image_urls = set()
         for img in all_images:
-            if len(unique_images) >= 500:  # Limit images to prevent memory issues
+            if len(unique_images) >= 1000:  # Increased limit for more comprehensive image collection
                 break
             if img['url'] not in seen_image_urls and img['url'].strip():
                 unique_images.append(img)
