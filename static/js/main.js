@@ -158,11 +158,25 @@ function showAlert(message, type = 'info') {
     const alertContainer = document.createElement('div');
     alertContainer.className = `alert alert-${type} alert-dismissible fade show`;
     alertContainer.setAttribute('role', 'alert');
-    alertContainer.innerHTML = `
-        <i class="fas fa-${getAlertIcon(type)} me-2"></i>
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    `;
+    
+    // Create icon element safely
+    const icon = document.createElement('i');
+    icon.className = `fas fa-${getAlertIcon(type)} me-2`;
+    
+    // Create message text node safely
+    const messageText = document.createTextNode(message);
+    
+    // Create close button safely
+    const closeButton = document.createElement('button');
+    closeButton.type = 'button';
+    closeButton.className = 'btn-close';
+    closeButton.setAttribute('data-bs-dismiss', 'alert');
+    closeButton.setAttribute('aria-label', 'Close');
+    
+    // Append elements safely
+    alertContainer.appendChild(icon);
+    alertContainer.appendChild(messageText);
+    alertContainer.appendChild(closeButton);
     
     const container = document.querySelector('.container');
     if (container) {
