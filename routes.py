@@ -1,6 +1,5 @@
 from flask import render_template, request, redirect, url_for, flash, send_file, abort
-from app import app, db
-from models import ScrapeHistory
+from app import app
 from web_scraper import scrape_website_content, scrape_entire_website
 from pdf_generator import generate_pdf, create_error_pdf
 from csv_generator import generate_csv, create_error_csv
@@ -38,15 +37,6 @@ def scrape():
     try:
         # Scrape the website
         scraped_data = scrape_website_content(url)
-        
-        # Save to database
-        scrape_record = ScrapeHistory()
-        scrape_record.url = url
-        scrape_record.title = scraped_data.get('title')
-        scrape_record.success = scraped_data['success']
-        scrape_record.error_message = scraped_data.get('error')
-        db.session.add(scrape_record)
-        db.session.commit()
         
         if scraped_data['success']:
             return render_template('result.html', data=scraped_data)
@@ -318,15 +308,6 @@ def scrape_entire():
         # Scrape the entire website
         scraped_data = scrape_entire_website(url)
         
-        # Save to database
-        scrape_record = ScrapeHistory()
-        scrape_record.url = url
-        scrape_record.title = scraped_data.get('title')
-        scrape_record.success = scraped_data['success']
-        scrape_record.error_message = scraped_data.get('error')
-        db.session.add(scrape_record)
-        db.session.commit()
-        
         if scraped_data['success']:
             # Mark this as a comprehensive scrape for the template
             scraped_data['is_comprehensive'] = True
@@ -348,5 +329,4 @@ def not_found_error(error):
 
 @app.errorhandler(500)
 def internal_error(error):
-    db.session.rollback()
     return render_template('error.html', error="Internal server error"), 500

@@ -12,7 +12,6 @@ Preferred communication style: Simple, everyday language.
 
 ### Backend Architecture
 - **Framework**: Flask (Python web framework)
-- **Database**: SQLAlchemy with configurable database backend (defaults to SQLite)
 - **Web Scraping**: Combination of BeautifulSoup, requests, and Trafilatura for content extraction
 - **PDF Generation**: ReportLab for creating PDF documents
 - **Deployment**: WSGI-compatible with ProxyFix middleware for reverse proxy support
@@ -23,8 +22,7 @@ Preferred communication style: Simple, everyday language.
 - **JavaScript**: Vanilla JavaScript for form validation and UI interactions
 - **Icons**: Font Awesome for iconography
 
-### Database Schema
-- **ScrapeHistory Model**: Tracks scraping operations with fields for URL, title, scrape date, success status, and error messages
+
 
 ## Key Components
 
@@ -34,7 +32,6 @@ Preferred communication style: Simple, everyday language.
 3. **web_scraper.py**: Main scraping logic using multiple libraries
 4. **link_extractor.py**: Specialized link extraction functionality
 5. **pdf_generator.py**: PDF document creation and formatting
-6. **models.py**: SQLAlchemy database models
 
 ### Web Scraping Pipeline
 - URL validation and preprocessing
@@ -54,15 +51,13 @@ Preferred communication style: Simple, everyday language.
 1. **User Input**: URL submission through web form
 2. **Validation**: URL format validation and preprocessing
 3. **Scraping**: Content and link extraction from target website
-4. **Storage**: Scrape history logged to database
-5. **Presentation**: Results displayed in web interface
-6. **PDF Export**: On-demand PDF generation from scraped data
+4. **Presentation**: Results displayed in web interface
+5. **PDF Export**: On-demand PDF generation from scraped data
 
 ## External Dependencies
 
 ### Python Libraries
 - **Flask**: Web framework and routing
-- **SQLAlchemy**: Database ORM and migrations
 - **BeautifulSoup4**: HTML parsing and navigation
 - **Trafilatura**: Clean text extraction from web pages
 - **ReportLab**: PDF document generation
@@ -80,18 +75,15 @@ Preferred communication style: Simple, everyday language.
 ## Deployment Strategy
 
 ### Configuration
-- Environment-based configuration for database URLs and secrets
+- Environment-based configuration for session secrets
 - Configurable session secrets for production security
-- Database connection pooling with health checks
 
 ### Production Considerations
 - ProxyFix middleware for reverse proxy deployments
-- Configurable database backends (SQLite default, PostgreSQL ready)
 - Error logging and debugging capabilities
 - Session management and security
 
 ### Scalability Features
-- Database connection pooling
 - Request timeout configurations
 - Memory-conscious content processing (500KB limit)
 - Graceful error handling and recovery
@@ -100,9 +92,10 @@ The application is designed to be easily deployable on various platforms with mi
 
 ## Recent Changes
 
-### August 9, 2025 - Security Fix and History Feature Removal
+### August 9, 2025 - Security Fix, History Feature and Database Removal
 - **Fixed XSS Vulnerability**: Replaced unsafe innerHTML usage in showAlert function with safe DOM manipulation methods using createElement and textContent
-- **Removed History Feature**: Removed the history viewing page and navigation link per user request, while keeping database logging for internal tracking
+- **Removed History Feature**: Removed the history viewing page and navigation link per user request
+- **Removed Database**: Completely removed SQLAlchemy and all database dependencies for a simpler, stateless architecture
 - **Enhanced Security**: All user-controlled data displayed in alerts is now properly sanitized through DOM text nodes
 
 ### August 9, 2025 - Image Scraping, Upload Feature, and LLM-Friendly Display Updates
