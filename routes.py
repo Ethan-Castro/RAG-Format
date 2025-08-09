@@ -81,8 +81,17 @@ def download_pdf():
                 'url': url,
                 'title': request.form.get('title') or 'Website Content',
                 'content': request.form.get('content') or 'No content available',
-                'links': []
+                'links': [],
+                'images': []
             }
+        
+        # Add images data if available from form
+        if 'images_data' in request.form:
+            try:
+                import json
+                scraped_data['images'] = json.loads(request.form.get('images_data', '[]'))
+            except:
+                pass
         
         # Generate PDF
         pdf_buffer = generate_pdf(scraped_data)
@@ -139,8 +148,17 @@ def download_csv():
                 'url': url,
                 'title': request.form.get('title') or 'Website Content',
                 'content': request.form.get('content') or 'No content available',
-                'links': []
+                'links': [],
+                'images': []
             }
+        
+        # Add images data if available from form
+        if 'images_data' in request.form:
+            try:
+                import json
+                scraped_data['images'] = json.loads(request.form.get('images_data', '[]'))
+            except:
+                pass
         
         # Generate CSV
         csv_buffer = generate_csv(scraped_data)
