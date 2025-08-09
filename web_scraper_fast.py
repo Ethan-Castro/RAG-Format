@@ -62,10 +62,10 @@ def scrape_page_fast(url, headers, timeout=1.5):
             'url': url
         }
 
-def scrape_entire_website_fast(base_url, max_pages=30, max_depth=3, max_runtime=28):
+def scrape_entire_website_fast(base_url, max_pages=30, max_depth=3, max_runtime=29):
     """
     Fast comprehensive website scraping - optimized for maximum content
-    Designed to complete within 28 seconds to avoid worker timeout
+    Designed to complete within 29 seconds to avoid worker timeout
     """
     logger.info(f"Starting fast comprehensive scrape for: {base_url}")
     
@@ -105,7 +105,7 @@ def scrape_entire_website_fast(base_url, max_pages=30, max_depth=3, max_runtime=
         
         # Scrape the page with a short timeout
         try:
-            result = scrape_page_fast(current_url, headers, timeout=1.5)
+            result = scrape_page_fast(current_url, headers, timeout=10)
             
             if result['success']:
                 pages_scraped += 1
@@ -146,7 +146,7 @@ def scrape_entire_website_fast(base_url, max_pages=30, max_depth=3, max_runtime=
     unique_links = []
     seen_urls = set()
     for link in all_links:
-        if len(unique_links) >= 5000:
+        if len(unique_links) >= 10000:
             break
         if link['url'] not in seen_urls and link['url'].strip():
             unique_links.append(link)

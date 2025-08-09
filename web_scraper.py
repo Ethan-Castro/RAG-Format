@@ -78,7 +78,7 @@ def scrape_website_content(url):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
         
-        response = requests.get(url, headers=headers, timeout=15)
+        response = requests.get(url, headers=headers, timeout=30)
         response.raise_for_status()
         
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -105,7 +105,7 @@ def scrape_website_content(url):
                 if text and href:
                     absolute_url = urljoin(url, href)
                     links.append({
-                        'text': text[:200],  # Limit text length
+                        'text': text[:250],  # Limit text length
                         'url': absolute_url[:500]  # Limit URL length
                     })
             except:
@@ -154,7 +154,7 @@ def scrape_website_content(url):
             'error': f"An unexpected error occurred: {str(e)}"
         }
 
-def scrape_entire_website(base_url, max_pages=25, max_depth=2):
+def scrape_entire_website(base_url, max_pages=30, max_depth=3):
     """
     Comprehensively scrape an entire website by following internal links
     
@@ -183,7 +183,7 @@ def scrape_entire_website(base_url, max_pages=25, max_depth=2):
         
         # Set time limit for entire operation (25 seconds max to stay under worker timeout)
         start_time = time.time()
-        max_runtime = 25  # seconds - must be less than Gunicorn's 30 second timeout
+        max_runtime = 29  # seconds - must be less than Gunicorn's 30 second timeout
         
         # Parse the base URL to determine the domain
         base_domain = urlparse(base_url).netloc
