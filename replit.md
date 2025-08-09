@@ -100,16 +100,6 @@ The application is designed to be easily deployable on various platforms with mi
 
 ## Recent Changes
 
-### August 9, 2025 - Optimized Maximum Content Scraping
-- **Created Fast Scraping Module**: New `web_scraper_fast.py` with simplified sequential processing to avoid deadlocks
-- **Maximum Content Collection**: Scrapes up to 30 pages across 3 depth levels for comprehensive coverage
-- **Optimized for Worker Timeout**: Completes within 28 seconds to stay under Gunicorn's 30-second limit
-- **Efficient Queue Management**: Limits queue to 100 URLs and processes 20 links per page
-- **Fast Page Processing**: 1.5 second timeout per page for quick failure recovery
-- **Smart Link Filtering**: Avoids non-content pages like PDFs, images, and admin pages
-- **Robust Error Handling**: Individual page failures don't stop the entire scraping process
-- **Session-Based Progress Tracking**: Prevents multiple simultaneous comprehensive scans
-
 ### August 9, 2025 - Image Scraping, Upload Feature, and LLM-Friendly Display Updates
 - **Added Image Scraping**: New feature to extract image URLs, titles/alt text, and display images from websites
 - **Image Upload Feature**: New capability to upload multiple images, host them online, and generate PDFs with hosted URLs

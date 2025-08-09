@@ -78,7 +78,7 @@ def scrape_website_content(url):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
         
-        response = requests.get(url, headers=headers, timeout=30)
+        response = requests.get(url, headers=headers, timeout=15)
         response.raise_for_status()
         
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -105,7 +105,7 @@ def scrape_website_content(url):
                 if text and href:
                     absolute_url = urljoin(url, href)
                     links.append({
-                        'text': text[:250],  # Limit text length
+                        'text': text[:200],  # Limit text length
                         'url': absolute_url[:500]  # Limit URL length
                     })
             except:
@@ -181,9 +181,9 @@ def scrape_entire_website(base_url, max_pages=30, max_depth=3):
         from urllib.parse import urlparse, urljoin
         import time
         
-        # Set time limit for entire operation (25 seconds max to stay under worker timeout)
+        # Set time limit for entire operation (2 minutes max)
         start_time = time.time()
-        max_runtime = 29  # seconds - must be less than Gunicorn's 30 second timeout
+        max_runtime = 120  # seconds
         
         # Parse the base URL to determine the domain
         base_domain = urlparse(base_url).netloc
@@ -211,23 +211,11 @@ def scrape_entire_website(base_url, max_pages=30, max_depth=3):
             visited_urls.add(current_url)
             
             try:
-                # Check time limit early to avoid worker timeouts
-                if (time.time() - start_time) > (max_runtime - 3):
-                    logger.info(f"Approaching time limit, stopping at {pages_scraped} pages")
-                    break
-                
                 logger.info(f"Scraping page {pages_scraped + 1} (depth {depth}): {current_url}")
                 
-                # Get the page with shorter timeout and better error handling
-                try:
-                    response = requests.get(current_url, headers=headers, timeout=3)
-                    response.raise_for_status()
-                except (requests.Timeout, requests.ConnectionError) as e:
-                    logger.warning(f"Network timeout/error for {current_url}: {e}")
-                    continue
-                except requests.RequestException as e:
-                    logger.warning(f"Request error for {current_url}: {e}")
-                    continue
+                # Get the page
+                response = requests.get(current_url, headers=headers, timeout=10)
+                response.raise_for_status()
                 
                 soup = BeautifulSoup(response.content, 'html.parser')
                 
@@ -283,7 +271,7 @@ def scrape_entire_website(base_url, max_pages=30, max_depth=3):
                 
                 # Add small delay to be respectful to the server
                 import time
-                time.sleep(0.05)  # Reduced delay for faster scanning
+                time.sleep(0.1)
                 
             except Exception as e:
                 logger.warning(f"Error scraping page {current_url}: {e}")
@@ -293,7 +281,7 @@ def scrape_entire_website(base_url, max_pages=30, max_depth=3):
         unique_links = []
         seen_urls = set()
         for link in all_links:
-            if len(unique_links) >= 10000:  # Increased limit for comprehensive scanning
+            if len(unique_links) >= 5000:  # Increased limit for comprehensive scanning
                 break
             if link['url'] not in seen_urls and link['url'].strip():
                 unique_links.append(link)
@@ -303,7 +291,7 @@ def scrape_entire_website(base_url, max_pages=30, max_depth=3):
         unique_images = []
         seen_image_urls = set()
         for img in all_images:
-            if len(unique_images) >= 1000:  # Increased limit for more comprehensive image collection
+            if len(unique_images) >= 500:  # Limit images to prevent memory issues
                 break
             if img['url'] not in seen_image_urls and img['url'].strip():
                 unique_images.append(img)

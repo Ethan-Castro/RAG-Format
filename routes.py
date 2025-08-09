@@ -1,8 +1,7 @@
-from flask import render_template, request, redirect, url_for, flash, send_file, abort, session
+from flask import render_template, request, redirect, url_for, flash, send_file, abort
 from app import app, db
 from models import ScrapeHistory
 from web_scraper import scrape_website_content, scrape_entire_website
-from web_scraper_fast import scrape_entire_website_fast
 from pdf_generator import generate_pdf, create_error_pdf
 from csv_generator import generate_csv, create_error_csv
 import logging
@@ -316,19 +315,8 @@ def scrape_entire():
         url = 'https://' + url
     
     try:
-        # Check if a comprehensive scan is already in progress for this session
-        if session.get('comprehensive_scan_in_progress'):
-            flash('A comprehensive scan is already in progress. Please wait for it to complete.', 'warning')
-            return redirect(url_for('index'))
-        
-        # Mark scan as in progress
-        session['comprehensive_scan_in_progress'] = True
-        
-        # Use the fast scraping function to avoid timeouts
-        scraped_data = scrape_entire_website_fast(url)
-        
-        # Clear the progress flag
-        session['comprehensive_scan_in_progress'] = False
+        # Scrape the entire website
+        scraped_data = scrape_entire_website(url)
         
         # Save to database
         scrape_record = ScrapeHistory()
@@ -348,8 +336,6 @@ def scrape_entire():
             return redirect(url_for('index'))
             
     except Exception as e:
-        # Clear the progress flag on error
-        session['comprehensive_scan_in_progress'] = False
         logger.error(f"Error in comprehensive scrape route: {e}")
         flash(f"An unexpected error occurred: {str(e)}", 'error')
         return redirect(url_for('index'))
