@@ -205,6 +205,9 @@ def upload_images_page():
 def upload_images():
     """Handle image uploads and generate PDF"""
     try:
+        import requests
+        import base64
+        
         # Check if files were uploaded
         if 'images' not in request.files:
             flash('No images selected', 'error')
@@ -216,14 +219,13 @@ def upload_images():
             flash('No images selected', 'error')
             return redirect(url_for('upload_images_page'))
         
-        # Create upload directory in static folder
-        upload_dir = os.path.join('static', 'uploads')
-        if not os.path.exists(upload_dir):
-            os.makedirs(upload_dir)
-        
         # Process uploaded images
         image_data = []
         allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+        
+        # Imgur anonymous upload endpoint
+        imgur_upload_url = "https://api.imgur.com/3/image"
+        imgur_client_id = "c1c8e67f9ad3e54"  # Public client ID for anonymous uploads
         
         for file in files:
             if file and file.filename:
@@ -232,26 +234,49 @@ def upload_images():
                 file_ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
                 
                 if file_ext in allowed_extensions:
-                    # Generate unique filename to avoid conflicts
-                    unique_id = str(uuid.uuid4())[:8]
-                    new_filename = f"{unique_id}_{filename}"
-                    file_path = os.path.join(upload_dir, new_filename)
-                    
-                    # Save the file
-                    file.save(file_path)
-                    
-                    # Create hosted URL (relative to static directory)
-                    hosted_url = url_for('static', filename=f'uploads/{new_filename}', _external=True)
-                    
-                    # Get original filename without extension for title
-                    title = os.path.splitext(filename)[0]
-                    
-                    image_data.append({
-                        'title': title,
-                        'url': hosted_url,
-                        'alt': title,
-                        'filename': filename
-                    })
+                    try:
+                        # Read file data
+                        file_data = file.read()
+                        
+                        # Convert to base64
+                        b64_image = base64.b64encode(file_data).decode('utf-8')
+                        
+                        # Upload to imgur
+                        headers = {
+                            'Authorization': f'Client-ID {imgur_client_id}'
+                        }
+                        
+                        payload = {
+                            'image': b64_image,
+                            'type': 'base64',
+                            'title': filename
+                        }
+                        
+                        response = requests.post(imgur_upload_url, headers=headers, data=payload, timeout=10)
+                        
+                        if response.status_code == 200:
+                            imgur_data = response.json()
+                            if imgur_data.get('success'):
+                                hosted_url = imgur_data['data']['link']
+                                
+                                # Get original filename without extension for title
+                                title = os.path.splitext(filename)[0]
+                                
+                                image_data.append({
+                                    'title': title,
+                                    'url': hosted_url,
+                                    'alt': title,
+                                    'filename': filename
+                                })
+                                logger.info(f"Successfully uploaded {filename} to imgur: {hosted_url}")
+                            else:
+                                logger.warning(f"Failed to upload {filename} to imgur")
+                        else:
+                            logger.warning(f"Imgur upload failed for {filename}: {response.status_code}")
+                            
+                    except Exception as e:
+                        logger.error(f"Error uploading {filename} to imgur: {e}")
+                        continue
         
         if not image_data:
             flash('No valid images were uploaded', 'error')
