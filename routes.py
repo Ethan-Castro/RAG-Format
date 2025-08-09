@@ -7,6 +7,9 @@ from csv_generator import generate_csv, create_error_csv
 import logging
 import json
 from datetime import datetime
+import os
+from werkzeug.utils import secure_filename
+import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -192,6 +195,96 @@ def download_csv():
         else:
             flash("Failed to generate CSV. Please try again.", 'error')
             return redirect(url_for('index'))
+
+@app.route('/upload-images')
+def upload_images_page():
+    """Display the image upload page"""
+    return render_template('upload_images.html')
+
+@app.route('/upload-images', methods=['POST'])
+def upload_images():
+    """Handle image uploads and generate PDF"""
+    try:
+        # Check if files were uploaded
+        if 'images' not in request.files:
+            flash('No images selected', 'error')
+            return redirect(url_for('upload_images_page'))
+        
+        files = request.files.getlist('images')
+        
+        if not files or all(f.filename == '' for f in files):
+            flash('No images selected', 'error')
+            return redirect(url_for('upload_images_page'))
+        
+        # Create upload directory in static folder
+        upload_dir = os.path.join('static', 'uploads')
+        if not os.path.exists(upload_dir):
+            os.makedirs(upload_dir)
+        
+        # Process uploaded images
+        image_data = []
+        allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+        
+        for file in files:
+            if file and file.filename:
+                # Get file extension
+                filename = secure_filename(file.filename)
+                file_ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+                
+                if file_ext in allowed_extensions:
+                    # Generate unique filename to avoid conflicts
+                    unique_id = str(uuid.uuid4())[:8]
+                    new_filename = f"{unique_id}_{filename}"
+                    file_path = os.path.join(upload_dir, new_filename)
+                    
+                    # Save the file
+                    file.save(file_path)
+                    
+                    # Create hosted URL (relative to static directory)
+                    hosted_url = url_for('static', filename=f'uploads/{new_filename}', _external=True)
+                    
+                    # Get original filename without extension for title
+                    title = os.path.splitext(filename)[0]
+                    
+                    image_data.append({
+                        'title': title,
+                        'url': hosted_url,
+                        'alt': title,
+                        'filename': filename
+                    })
+        
+        if not image_data:
+            flash('No valid images were uploaded', 'error')
+            return redirect(url_for('upload_images_page'))
+        
+        # Create data structure for PDF generation
+        scraped_data = {
+            'url': 'Uploaded Images',
+            'title': f'Image Collection - {len(image_data)} images',
+            'content': f'This PDF contains {len(image_data)} uploaded images with their hosted URLs.',
+            'links': [],
+            'images': image_data,
+            'success': True
+        }
+        
+        # Generate PDF
+        pdf_buffer = generate_pdf(scraped_data)
+        
+        # Create filename for download
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f"uploaded_images_{timestamp}.pdf"
+        
+        return send_file(
+            pdf_buffer,
+            as_attachment=True,
+            download_name=filename,
+            mimetype='application/pdf'
+        )
+        
+    except Exception as e:
+        logger.error(f"Error processing uploaded images: {e}")
+        flash(f"Error processing images: {str(e)}", 'error')
+        return redirect(url_for('upload_images_page'))
 
 @app.route('/scrape_entire', methods=['POST'])
 def scrape_entire():

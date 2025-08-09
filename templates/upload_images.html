@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Images - Link Scraper{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-upload me-2"></i>
+                    Upload Images for PDF Generation
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('upload_images') }}" enctype="multipart/form-data" id="uploadForm">
+                    <div class="mb-4">
+                        <label for="images" class="form-label">Select Images to Upload</label>
+                        <input type="file" 
+                               class="form-control" 
+                               id="images" 
+                               name="images" 
+                               multiple 
+                               accept="image/*"
+                               required>
+                        <small class="text-muted">
+                            You can select multiple images at once. Supported formats: JPG, PNG, GIF, WebP
+                        </small>
+                    </div>
+                    
+                    <div id="imagePreview" class="mb-4" style="display: none;">
+                        <h6>Selected Images:</h6>
+                        <div class="row g-2" id="previewContainer"></div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary" id="uploadBtn">
+                            <i class="fas fa-cloud-upload-alt me-2"></i>
+                            Upload and Generate PDF
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-3 text-center">
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Back to Web Scraper
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Instructions -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-info-circle me-2"></i>
+                    How It Works
+                </h5>
+                <ol class="mb-0">
+                    <li>Select multiple images from your computer</li>
+                    <li>Images will be uploaded and hosted online</li>
+                    <li>Each image will retain its original filename as the title</li>
+                    <li>A PDF will be generated with:
+                        <ul>
+                            <li>The image displayed</li>
+                            <li>The image title (filename)</li>
+                            <li>The hosted image URL</li>
+                        </ul>
+                    </li>
+                    <li>Download the PDF with all image information</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Progress Modal -->
+<div class="modal fade" id="uploadProgressModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-upload me-2"></i>
+                    Processing Images
+                </h5>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">Please wait while we upload and process your images...</p>
+                <div class="progress" style="height: 25px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                         role="progressbar" 
+                         id="uploadProgressBar"
+                         style="width: 0%"
+                         aria-valuenow="0" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">0%</div>
+                </div>
+                <div class="mt-3 text-muted small" id="uploadStatus">Uploading images...</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('images');
+    const previewDiv = document.getElementById('imagePreview');
+    const previewContainer = document.getElementById('previewContainer');
+    const uploadForm = document.getElementById('uploadForm');
+    
+    // Preview selected images
+    fileInput.addEventListener('change', function(e) {
+        const files = e.target.files;
+        if (files.length > 0) {
+            previewDiv.style.display = 'block';
+            previewContainer.innerHTML = '';
+            
+            Array.from(files).forEach((file, index) => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const col = document.createElement('div');
+                        col.className = 'col-md-3 col-sm-4 col-6';
+                        col.innerHTML = `
+                            <div class="card">
+                                <img src="${e.target.result}" class="card-img-top" style="height: 100px; object-fit: cover;">
+                                <div class="card-body p-1">
+                                    <small class="text-truncate d-block">${file.name}</small>
+                                </div>
+                            </div>
+                        `;
+                        previewContainer.appendChild(col);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        } else {
+            previewDiv.style.display = 'none';
+        }
+    });
+    
+    // Show progress modal on form submit
+    uploadForm.addEventListener('submit', function(e) {
+        const modal = new bootstrap.Modal(document.getElementById('uploadProgressModal'));
+        modal.show();
+        
+        let progress = 0;
+        const progressBar = document.getElementById('uploadProgressBar');
+        const uploadStatus = document.getElementById('uploadStatus');
+        
+        const statuses = [
+            'Uploading images...',
+            'Hosting images online...',
+            'Processing image metadata...',
+            'Generating PDF document...',
+            'Finalizing...'
+        ];
+        
+        let statusIndex = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 20;
+            if (progress > 95) progress = 95;
+            
+            progressBar.style.width = progress + '%';
+            progressBar.setAttribute('aria-valuenow', progress);
+            progressBar.textContent = Math.round(progress) + '%';
+            
+            if (statusIndex < statuses.length) {
+                uploadStatus.textContent = statuses[statusIndex];
+                statusIndex++;
+            }
+            
+            if (progress >= 95) {
+                clearInterval(interval);
+                progressBar.style.width = '100%';
+                progressBar.textContent = '100%';
+                uploadStatus.textContent = 'Preparing download...';
+            }
+        }, 800);
+    });
+});
+</script>
+{% endblock %}

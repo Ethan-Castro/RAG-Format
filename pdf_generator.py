@@ -136,7 +136,10 @@ def generate_pdf(scraped_data):
         
         # Add title
         if scraped_data.get('title'):
-            story.append(Paragraph(f"Links from: {scraped_data['title']}", title_style))
+            if 'Image Collection' in scraped_data.get('title', ''):
+                story.append(Paragraph(scraped_data['title'], title_style))
+            else:
+                story.append(Paragraph(f"Links from: {scraped_data['title']}", title_style))
         else:
             story.append(Paragraph("Website Links", title_style))
         
