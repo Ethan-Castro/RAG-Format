@@ -65,12 +65,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 validateUrl(urlInput);
                 
                 // Add visual feedback
+                const originalText = this.textContent;
                 this.classList.add('btn-success');
                 this.innerHTML = '<i class="fas fa-check me-2"></i>URL Selected';
                 
                 setTimeout(() => {
                     this.classList.remove('btn-success');
-                    this.innerHTML = this.innerHTML.replace('URL Selected', this.querySelector('i').nextSibling.textContent);
+                    this.textContent = originalText;
                 }, 1500);
             }
         });
