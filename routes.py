@@ -2,6 +2,7 @@ from flask import render_template, request, redirect, url_for, flash, send_file,
 from app import app, db
 from models import ScrapeHistory
 from web_scraper import scrape_website_content, scrape_entire_website
+from web_scraper_fast import scrape_entire_website_fast
 from pdf_generator import generate_pdf, create_error_pdf
 from csv_generator import generate_csv, create_error_csv
 import logging
@@ -323,8 +324,8 @@ def scrape_entire():
         # Mark scan as in progress
         session['comprehensive_scan_in_progress'] = True
         
-        # Scrape the entire website
-        scraped_data = scrape_entire_website(url)
+        # Use the fast scraping function to avoid timeouts
+        scraped_data = scrape_entire_website_fast(url)
         
         # Clear the progress flag
         session['comprehensive_scan_in_progress'] = False

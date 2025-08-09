@@ -154,7 +154,7 @@ def scrape_website_content(url):
             'error': f"An unexpected error occurred: {str(e)}"
         }
 
-def scrape_entire_website(base_url, max_pages=50, max_depth=3):
+def scrape_entire_website(base_url, max_pages=25, max_depth=2):
     """
     Comprehensively scrape an entire website by following internal links
     
@@ -181,9 +181,9 @@ def scrape_entire_website(base_url, max_pages=50, max_depth=3):
         from urllib.parse import urlparse, urljoin
         import time
         
-        # Set time limit for entire operation (4 minutes max for comprehensive scanning)
+        # Set time limit for entire operation (25 seconds max to stay under worker timeout)
         start_time = time.time()
-        max_runtime = 240  # seconds
+        max_runtime = 25  # seconds - must be less than Gunicorn's 30 second timeout
         
         # Parse the base URL to determine the domain
         base_domain = urlparse(base_url).netloc
@@ -212,7 +212,7 @@ def scrape_entire_website(base_url, max_pages=50, max_depth=3):
             
             try:
                 # Check time limit early to avoid worker timeouts
-                if (time.time() - start_time) > (max_runtime - 30):
+                if (time.time() - start_time) > (max_runtime - 3):
                     logger.info(f"Approaching time limit, stopping at {pages_scraped} pages")
                     break
                 
@@ -220,7 +220,7 @@ def scrape_entire_website(base_url, max_pages=50, max_depth=3):
                 
                 # Get the page with shorter timeout and better error handling
                 try:
-                    response = requests.get(current_url, headers=headers, timeout=5)
+                    response = requests.get(current_url, headers=headers, timeout=3)
                     response.raise_for_status()
                 except (requests.Timeout, requests.ConnectionError) as e:
                     logger.warning(f"Network timeout/error for {current_url}: {e}")

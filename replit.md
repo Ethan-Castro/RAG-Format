@@ -100,15 +100,15 @@ The application is designed to be easily deployable on various platforms with mi
 
 ## Recent Changes
 
-### August 9, 2025 - Enhanced Comprehensive Scraping Capabilities
-- **Increased Runtime Capacity**: Extended comprehensive scraping time limit to 4 minutes (240 seconds) for more thorough scanning
-- **Enhanced Scanning Depth**: Restored max pages to 50 and depth to 3 levels for comprehensive website exploration
-- **Improved Data Collection**: Increased link collection limit to 10,000 and image collection to 1,000 for extensive content gathering
-- **Optimized Performance**: Reduced inter-page delay from 0.1 to 0.05 seconds for faster scanning while maintaining server respect
-- **Better Timeout Management**: 30-second buffer before timeout to ensure graceful completion
-- **Robust Error Handling**: Specific timeout and connection error handling for individual page requests
+### August 9, 2025 - Fast Parallel Scraping Implementation
+- **Created Fast Scraping Module**: New `web_scraper_fast.py` with parallel processing using ThreadPoolExecutor
+- **Parallel Request Processing**: Scrapes up to 5 pages simultaneously for much faster execution
+- **Optimized for Timeout Limits**: Completes within 18 seconds to stay well under Gunicorn's 30-second timeout
+- **Efficient Resource Usage**: Uses threading locks for safe concurrent access to shared data
+- **Smart Batch Processing**: Processes pages in batches with concurrent futures for maximum efficiency
+- **Maintained Comprehensive Coverage**: Still scrapes up to 15 pages across 2 depth levels
+- **Robust Error Handling**: Individual page failures don't stop the entire scraping process
 - **Session-Based Progress Tracking**: Prevents multiple simultaneous comprehensive scans
-- **Worker Timeout Protection**: Enhanced early timeout detection to prevent worker crashes
 
 ### August 9, 2025 - Image Scraping, Upload Feature, and LLM-Friendly Display Updates
 - **Added Image Scraping**: New feature to extract image URLs, titles/alt text, and display images from websites
