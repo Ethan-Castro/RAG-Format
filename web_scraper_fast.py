@@ -6,12 +6,10 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import threading
 
 logger = logging.getLogger(__name__)
 
-def scrape_page_fast(url, headers, timeout=2):
+def scrape_page_fast(url, headers, timeout=1.5):
     """Scrape a single page quickly"""
     try:
         response = requests.get(url, headers=headers, timeout=timeout)
@@ -64,23 +62,22 @@ def scrape_page_fast(url, headers, timeout=2):
             'url': url
         }
 
-def scrape_entire_website_fast(base_url, max_pages=15, max_depth=2, max_runtime=18):
+def scrape_entire_website_fast(base_url, max_pages=30, max_depth=3, max_runtime=28):
     """
-    Fast comprehensive website scraping with parallel requests
-    Designed to complete within 20 seconds to avoid timeouts
+    Fast comprehensive website scraping - optimized for maximum content
+    Designed to complete within 28 seconds to avoid worker timeout
     """
     logger.info(f"Starting fast comprehensive scrape for: {base_url}")
     
     start_time = time.time()
     base_domain = urlparse(base_url).netloc
     
-    # Threading-safe collections
+    # Simple collections (no threading needed)
     visited_urls = set()
     all_links = []
     all_images = []
     pages_scraped = 0
     website_title = None
-    lock = threading.Lock()
     
     # Queue management
     to_visit = [(base_url, 0)]  # (url, depth)
@@ -89,84 +86,61 @@ def scrape_entire_website_fast(base_url, max_pages=15, max_depth=2, max_runtime=
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
     }
     
-    # Process pages in batches with threading
-    with ThreadPoolExecutor(max_workers=5) as executor:
-        while to_visit and pages_scraped < max_pages:
-            # Check time limit
-            if (time.time() - start_time) > max_runtime:
-                logger.info(f"Time limit reached after {pages_scraped} pages")
-                break
+    # Sequential processing with early exit on timeout
+    while to_visit and pages_scraped < max_pages:
+        # Check time limit early
+        elapsed = time.time() - start_time
+        if elapsed > max_runtime:
+            logger.info(f"Time limit reached after {pages_scraped} pages in {elapsed:.1f}s")
+            break
+        
+        # Get next URL to process
+        current_url, depth = to_visit.pop(0)
+        
+        # Skip if already visited or too deep
+        if current_url in visited_urls or depth > max_depth:
+            continue
+        
+        visited_urls.add(current_url)
+        
+        # Scrape the page with a short timeout
+        try:
+            result = scrape_page_fast(current_url, headers, timeout=1.5)
             
-            # Get batch of URLs to process (up to 5 at a time)
-            batch = []
-            batch_size = min(5, len(to_visit), max_pages - pages_scraped)
-            
-            for _ in range(batch_size):
-                if not to_visit:
-                    break
-                url, depth = to_visit.pop(0)
+            if result['success']:
+                pages_scraped += 1
                 
-                # Skip if already visited or too deep
-                with lock:
-                    if url in visited_urls or depth > max_depth:
-                        continue
-                    visited_urls.add(url)
+                # Set title from first page
+                if pages_scraped == 1 and result['title']:
+                    website_title = result['title']
                 
-                batch.append((url, depth))
-            
-            if not batch:
-                continue
-            
-            # Submit batch for parallel processing
-            futures = {
-                executor.submit(scrape_page_fast, url, headers): (url, depth)
-                for url, depth in batch
-            }
-            
-            # Process results as they complete
-            for future in as_completed(futures, timeout=5):
-                url, depth = futures[future]
+                # Add links and images
+                all_links.extend(result['links'])
+                all_images.extend(result['images'])
                 
-                try:
-                    result = future.result(timeout=3)
-                    
-                    if result['success']:
-                        with lock:
-                            pages_scraped += 1
-                            
-                            # Set title from first page
-                            if pages_scraped == 1 and result['title']:
-                                website_title = result['title']
-                            
-                            # Add links
-                            all_links.extend(result['links'])
-                            
-                            # Add images
-                            all_images.extend(result['images'])
-                            
-                            # Queue internal links for further exploration
-                            if depth < max_depth:
-                                for link_data in result['links']:
-                                    link_url = link_data['url']
-                                    parsed_link = urlparse(link_url)
-                                    
-                                    # Only follow internal links
-                                    if parsed_link.netloc == base_domain:
-                                        # Avoid common non-content pages
-                                        avoid_patterns = [
-                                            '.pdf', '.jpg', '.png', '.gif', '.zip',
-                                            '#', 'mailto:', 'tel:', 'javascript:'
-                                        ]
-                                        if not any(p in link_url.lower() for p in avoid_patterns):
-                                            with lock:
-                                                if link_url not in visited_urls:
-                                                    to_visit.append((link_url, depth + 1))
+                # Queue internal links for further exploration
+                if depth < max_depth:
+                    for link_data in result['links'][:20]:  # Limit to 20 links per page
+                        link_url = link_data['url']
+                        parsed_link = urlparse(link_url)
                         
-                        logger.info(f"Scraped page {pages_scraped}: {url}")
-                        
-                except Exception as e:
-                    logger.warning(f"Error processing {url}: {e}")
-                    continue
+                        # Only follow internal links
+                        if parsed_link.netloc == base_domain:
+                            # Avoid common non-content pages
+                            avoid_patterns = [
+                                '.pdf', '.jpg', '.png', '.gif', '.zip',
+                                '#', 'mailto:', 'tel:', 'javascript:',
+                                '/login', '/logout', '/admin'
+                            ]
+                            if not any(p in link_url.lower() for p in avoid_patterns):
+                                if link_url not in visited_urls and len(to_visit) < 100:
+                                    to_visit.append((link_url, depth + 1))
+                
+                logger.info(f"Scraped page {pages_scraped} of {max_pages}: {current_url[:80]}")
+                
+        except Exception as e:
+            logger.warning(f"Error scraping {current_url}: {e}")
+            continue
     
     # Remove duplicates
     unique_links = []

@@ -100,13 +100,13 @@ The application is designed to be easily deployable on various platforms with mi
 
 ## Recent Changes
 
-### August 9, 2025 - Fast Parallel Scraping Implementation
-- **Created Fast Scraping Module**: New `web_scraper_fast.py` with parallel processing using ThreadPoolExecutor
-- **Parallel Request Processing**: Scrapes up to 5 pages simultaneously for much faster execution
-- **Optimized for Timeout Limits**: Completes within 18 seconds to stay well under Gunicorn's 30-second timeout
-- **Efficient Resource Usage**: Uses threading locks for safe concurrent access to shared data
-- **Smart Batch Processing**: Processes pages in batches with concurrent futures for maximum efficiency
-- **Maintained Comprehensive Coverage**: Still scrapes up to 15 pages across 2 depth levels
+### August 9, 2025 - Optimized Maximum Content Scraping
+- **Created Fast Scraping Module**: New `web_scraper_fast.py` with simplified sequential processing to avoid deadlocks
+- **Maximum Content Collection**: Scrapes up to 30 pages across 3 depth levels for comprehensive coverage
+- **Optimized for Worker Timeout**: Completes within 28 seconds to stay under Gunicorn's 30-second limit
+- **Efficient Queue Management**: Limits queue to 100 URLs and processes 20 links per page
+- **Fast Page Processing**: 1.5 second timeout per page for quick failure recovery
+- **Smart Link Filtering**: Avoids non-content pages like PDFs, images, and admin pages
 - **Robust Error Handling**: Individual page failures don't stop the entire scraping process
 - **Session-Based Progress Tracking**: Prevents multiple simultaneous comprehensive scans
 
