@@ -1,0 +1,77 @@
+
+This is an image of the Publish button: [![Screenshot-2025-08-07-at-9-04-36-AM.png](https://i.postimg.cc/HjGkRkFh/Screenshot-2025-08-07-at-9-04-36-AM.png)](https://postimg.cc/m1w4FBLY) 
+
+
+This is an image of the app Publishing options within Playlab. This image shows an app that was published publicly (meaning that anyone with the link can use the app): [![Screenshot-2025-08-07-at-9-11-15-AM.png](https://i.postimg.cc/RVsBWFP5/Screenshot-2025-08-07-at-9-11-15-AM.png)](https://postimg.cc/mtHqqbf8)
+
+
+
+
+This is an image of the app Publishing options within Playlab. This image shows an app that was published to Playlab (meaning that only Playlab users will be able to use the app): [![Screenshot-2025-08-07-at-9-12-12-AM.png](https://i.postimg.cc/Jn5wM4yF/Screenshot-2025-08-07-at-9-12-12-AM.png)](https://postimg.cc/N9FCxtk8)
+
+
+
+
+This is an image of the app Publishing options within Playlab. This image shows an app that was published to an Organization (meaning that only Playlab users within the Organization can use the app): [![Screenshot-2025-08-07-at-9-13-50-AM.png](https://i.postimg.cc/VLS7Fkfc/Screenshot-2025-08-07-at-9-13-50-AM.png)](https://postimg.cc/F74grmkP)
+
+
+
+This is an image of the app Publishing options within Playlab. This image shows an app that was published to a workspace (meaning that only Playlab users within the workspace or with admin/ownership access over the organization that the workspace might be hosted in can use the app): 
+[![Screenshot-2025-08-07-at-9-14-47-AM.png](https://i.postimg.cc/SK4DqLWy/Screenshot-2025-08-07-at-9-14-47-AM.png)](https://postimg.cc/yDfFyZQ5)
+
+
+This is an image of an app that is NOT PUBLISHED, meaning that no one other than the owner of the app can use this app. The link will not work for anyone.
+[![Screenshot-2025-08-07-at-9-15-53-AM.png](https://i.postimg.cc/Tw4VynW5/Screenshot-2025-08-07-at-9-15-53-AM.png)](https://postimg.cc/Fd0d8dph)
+
+
+
+
+This is an image of our model selection: [![Screenshot-2025-08-07-at-9-05-16-AM.png](https://i.postimg.cc/ht1VLkdB/Screenshot-2025-08-07-at-9-05-16-AM.png)] (https://postimg.cc/ts71ymkS) 
+
+
+
+This is an image of selecting variability within Playlab. Variability is similar to creativity and the same as temperature in the field of large language models. The higher the variability, the more creative/random the responses will be. [![Screenshot-2025-08-07-at-9-17-12-AM.png](https://i.postimg.cc/W3h9fNGr/Screenshot-2025-08-07-at-9-17-12-AM.png)](https://postimg.cc/hzRbXq3P)
+
+
+
+Here is an image of references within Playlab. References allow users to upload their own documents for their app to pull from. Users can add references by uploading one at a tme by clicking ‘add reference to app’ or multiple at a time by clicking ‘select files’ on the top : [![Screenshot-2025-08-07-at-9-26-04-AM.png](https://i.postimg.cc/k410BYcN/Screenshot-2025-08-07-at-9-26-04-AM.png)](https://postimg.cc/KkTqWNC4)
+
+
+
+
+
+This is an image of memory within Playlab. Click memory to enable your app to remember details about users. Type in what you want the app to remember in the white text area. 
+[![Screenshot-2025-08-07-at-9-28-05-AM.png](https://i.postimg.cc/vT5C38yh/Screenshot-2025-08-07-at-9-28-05-AM.png)](https://postimg.cc/N2fN0c52)
+
+
+
+
+This is an image of the Playlab Assistant. The playlab assistant can help you write and modify your background prompts. [![Screenshot-2025-08-07-at-9-29-54-AM.png](https://i.postimg.cc/RC1PsDfg/Screenshot-2025-08-07-at-9-29-54-AM.png)](https://postimg.cc/8s5BswZv)
+
+
+
+
+
+
+This is an image of the comments feature within Playlab. You can leave comments on others’ apps that you have edit access to, in order to help them modify their prompt. [![Screenshot-2025-08-07-at-9-31-57-AM.png](https://i.postimg.cc/ZKCdB9T6/Screenshot-2025-08-07-at-9-31-57-AM.png)](https://postimg.cc/HV1xFk8L)
+
+
+
+
+
+This is an image of starter inputs in Playlab. Starter inputs allow you to have the user select, write, or upload something before starting a conversation. That material will be taken into context throughout the conversation. [![Screenshot-2025-08-07-at-9-39-10-AM.png](https://i.postimg.cc/htN6W7Gs/Screenshot-2025-08-07-at-9-39-10-AM.png)](https://postimg.cc/jDQZy2Pn)
+
+
+
+
+
+
+This is an image of settings within Playlab. You can change your welcome message, app name, app description and more. [![Screenshot-2025-08-07-at-9-40-36-AM.png](https://i.postimg.cc/X7RknKwr/Screenshot-2025-08-07-at-9-40-36-AM.png)](https://postimg.cc/2VxZwZ9Y)
+
+
+
+This is the second image of settings within Playlab. You can turn on ‘avoid answer generation’ as well as allow for ‘image input’ and ‘request user profile’ [![Screenshot-2025-08-07-at-9-41-36-AM.png](https://i.postimg.cc/pdqj5KnY/Screenshot-2025-08-07-at-9-41-36-AM.png)](https://postimg.cc/yJ3xwgjk) 
+
+
+
+This is an image of tools within Playlab. All tools and connections will be accessed through here. Including: Chart Generator, Number Line Generator, Right Triangle Diagram, Cylinder Diagram, More Math diagrams, Illustrative Math tools, Google Drive connections, and more tools [![Screenshot-2025-08-07-at-9-42-36-AM.png](https://i.postimg.cc/Ls6TW9tD/Screenshot-2025-08-07-at-9-42-36-AM.png)](https://postimg.cc/ZW2pBhDv)
